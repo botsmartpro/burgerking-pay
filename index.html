@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burger King Pay — Customer Journey Map</title>
+<meta name="description" content="Интерактивный клиентский путь продукта Burger King Pay — white-label кошелька на платформе Альфа-Банка">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23502314'/><path d='M7 14.5c0-3.9 4-7 9-7s9 3.1 9 7v.8H7v-.8z' fill='%23FFAA00'/><rect x='7' y='17.4' width='18' height='3.2' rx='1.6' fill='%23F5EBDC'/><path d='M7 22.7h18v.6c0 1.9-1.6 3.4-3.5 3.4h-11C8.6 26.7 7 25.2 7 23.3v-.6z' fill='%23FFAA00'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#F5EBDC;color:#502314}
+body{font-family:'Rubik','SF Pro Text','Segoe UI',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
+button:focus{outline:none}
+button:focus-visible{outline:2px solid #D62300;outline-offset:2px}
+::selection{background:#502314;color:#F5EBDC}
+::-webkit-scrollbar{height:4px;width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#CDB58E;border-radius:2px}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+/* Direction-aware переходы экранов: React remount по ключу.
+   Воспроизводятся безусловно — без блокировки prefers-reduced-motion (Safari). */
+@keyframes scrFwd{from{opacity:0;transform:translateX(52px)}to{opacity:1;transform:none}}
+@keyframes scrBack{from{opacity:0;transform:translateX(-52px)}to{opacity:1;transform:none}}
+.scr-fwd{animation:scrFwd .34s cubic-bezier(.22,.9,.3,1) both}
+.scr-back{animation:scrBack .34s cubic-bezier(.22,.9,.3,1) both}
+@keyframes panFwd{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+@keyframes panBack{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.pan-fwd{animation:panFwd .34s cubic-bezier(.22,.9,.3,1) both}
+.pan-back{animation:panBack .34s cubic-bezier(.22,.9,.3,1) both}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#502314">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#502314"/>
+    <path d="M470 355c0-72 58-130 130-130s130 58 130 130v14H470v-14z" fill="#FFAA00"/>
+    <rect x="470" y="404" width="260" height="52" rx="26" fill="#F5EBDC"/>
+    <path d="M470 492h260v10c0 33-27 60-60 60H530c-33 0-60-27-60-60v-10z" fill="#FFAA00"/>
+    <rect x="300" y="640" width="600" height="6" rx="3" fill="#FF8732" opacity="0.7"/>
+  </svg>
+</template>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+/* Burger King brand palette (2021 rebrand):
+   R  — Fiery Red, O — Flaming Orange, Y — Melty Yellow (CTA),
+   D  — BBQ Brown (text/dark), BG — Mayo Egg White (page),
+   PBG — phone cream, CARD — card surface, AR — Альфа-красный (только миниатюры Альфа-Карт) */
+const R="#D62300",O="#FF8732",Y="#FFAA00",D="#502314",BG="#F5EBDC",
+      PBG="#EFE2CB",CARD="#FBF5E9",
+      G1="#7E6049",G2="#B59A7D",G3="#E5D5B8",G4="#F6EDDC",
+      AR="#EF3124";
+
+/* ========== DATA ========== */
+
+const scenarios=[
+{id:"new",label:"Новый клиент",desc:"Выпуск карты + пополнение + оплата",steps:[
+{title:"Точка входа",zone:"Burger King",screen:"offer",desc:"Клиент видит баннер «Скидка до 35% по Кинг-Карте» на чек-ауте приложения Burger King",metricPartner:"Рост конверсии чек-аута на 12-15% за счёт скидочного оффера",metricBank:"Охват: доступ к аудитории Burger King — миллионы MAU без затрат на привлечение"},
+{title:"Оффер + согласия",zone:"Burger King → Банк",screen:"consents",desc:"Экран с преимуществами: скидка, бесплатное обслуживание, до 30% коронами. Согласия Burger King и банка",metricPartner:"Скидка от банка за счёт экономии на эквайринге — не из маржи Burger King",metricBank:"Стоимость привлечения ≈ 0 ₽ — клиент приходит сам через канал Burger King"},
+{title:"Ввод телефона",zone:"Банк (WebView)",screen:"phone",desc:"Клиент вводит номер телефона. Банк отправляет СМС с ОТР-кодом для идентификации",metricPartner:"Бесшовный UX: клиент не покидает приложение Burger King",metricBank:"Идентификация клиента за 20 секунд — без визита в отделение"},
+{title:"Подтверждение OTP",zone:"Банк (WebView)",screen:"otp",desc:"Клиент вводит 4-значный код из СМС. При успешной валидации клиент идентифицирован",metricPartner:"Минимальный отток: 94% клиентов успешно проходят верификацию",metricBank:"Формирование клиентской базы N2B с привязкой к Burger King"},
+{title:"Заполнение анкеты",zone:"Банк (WebView)",screen:"form",desc:"ФИО, дата рождения, гражданство. Предзаполнение из данных Burger King. 2 шага — минимум полей для MVP",metricPartner:"Предзаполнение из данных Burger King — клиент тратит <60 сек на заявку",metricBank:"Новый клиент банка (N2B): выпуск карты без отделения и курьера"},
+{title:"Цифровая карта выпущена",zone:"Банк (WebView)",screen:"issued",desc:"Моментальный выпуск предоплаченной карты. Экран успеха с предложением пополнить и заказать пластик",metricPartner:"Клиент готов к покупке через 2 минуты после нажатия на баннер",metricBank:"Моментальный выпуск ЦТ — конверсия в пластик до 60% от входа в воронку"},
+{title:"Пополнение карты",zone:"Банк (WebView)",screen:"topup",desc:"Для нового клиента: C2B-схема — пополнение через платёжный шлюз с карты другого банка",metricPartner:"Среднее пополнение: 2 500 ₽ — сумма, достаточная для покупки",metricBank:"Привлечение остатков из других банков. Рост балансов на счетах"},
+{title:"Оплата на чек-ауте",zone:"Burger King",screen:"pay",desc:"Реквизиты ПК автоматически переданы Burger King. Карта привязана к эквайрингу. Клиент видит скидку и платит",metricPartner:"Рост среднего чека +18%, повышение LTV клиента через короны Кинг Клуба",metricBank:"Комиссионный доход от эквайринга. Активация карты = начало транзакционной активности"},
+]},
+{id:"existing",label:"Действующий клиент",desc:"Привязка карты + пополнение + оплата",steps:[
+{title:"Точка входа",zone:"Burger King",screen:"offer",desc:"Баннер «Добавить Кинг-Карту к оплате» на чек-ауте. Клиент уже имеет Альфа-Карту, но не привязал её",metricPartner:"Аудитория 20 млн клиентов Альфа-Банка — готовые покупатели с картами",metricBank:"Рост транзакционной активности по существующим картам"},
+{title:"Оффер + согласия",zone:"Burger King → Банк",screen:"consents",desc:"Согласия на привязку карты и передачу банковской тайны. Памятка ЭДС, СОПД",metricPartner:"Экономия на эквайринге до 30% при оплате Кинг-Картой",metricBank:"Увеличение доли Кинг-Карт в платёжном миксе Burger King"},
+{title:"Идентификация",zone:"Банк (WebView)",screen:"phone",desc:"Ввод номера телефона + ОТР. Банк идентифицирует клиента",metricPartner:"Быстрая привязка — клиент не уходит из приложения",metricBank:"Создание связки «клиент банка — гость Burger King» для аналитики и кросс-продаж"},
+{title:"Выбор карты",zone:"Банк (WebView)",screen:"select",desc:"WebView отображает все активные карты в маскированном виде. Клиент выбирает карту для оплаты",metricPartner:"Автоматическая привязка — нет ручного ввода реквизитов (рост конверсии)",metricBank:"Данные о предпочтениях клиента: какую карту выбирает для покупок в Burger King"},
+{title:"Пополнение (me2me)",zone:"Банк (WebView)",screen:"topup_me2me",desc:"Если баланс недостаточен — запрос на пополнение через me2me (перевод между своими счетами)",metricPartner:"Клиент не уходит при нехватке средств — пополняет карту прямо в процессе",metricBank:"Консолидация остатков клиента на Кинг-Карте"},
+{title:"Оплата со скидкой",zone:"Burger King",screen:"pay",desc:"Реквизиты переданы → карта привязана к эквайрингу → применяется скидка → клиент платит",metricPartner:"Рост частоты покупок на 25% благодаря коронам Кинг Клуба",metricBank:"Рост TPV (объём транзакций) по эквайрингу через канал Burger King"},
+]},
+{id:"no_card",label:"Клиент без активной карты",desc:"Выпуск ДК + привязка + оплата",steps:[
+{title:"Точка входа",zone:"Burger King",screen:"offer",desc:"Информер о повышенной скидке по Кинг-Карте",metricPartner:"Реактивация спящих клиентов банка через канал Burger King",metricBank:"Возврат неактивных клиентов: выпуск новой ДК без затрат на ремаркетинг"},
+{title:"Согласия + идентификация",zone:"Банк (WebView)",screen:"consents",desc:"Согласия банка + ввод телефона + OTP. Банк определяет клиента как действующего без активной ДК",metricPartner:"Burger King получает лояльного клиента с банковской историей",metricBank:"Идентификация по существующему CUS — не нужна полная анкета"},
+{title:"Предложение выпуска",zone:"Банк (WebView)",screen:"upsell",desc:"Экран: «Выпустите бесплатную Кинг-Карту и получите повышенную скидку»",metricPartner:"Дополнительная мотивация к покупке — скидка привязана к новой карте",metricBank:"Конверсия в выпуск ДК: 55% — эффективнее прямых каналов в 3 раза"},
+{title:"Заявка на ДК",zone:"Банк (WebView)",screen:"form",desc:"Заполнение анкеты для выпуска дебетовой карты. Предзаполнение ФИО из данных банка",metricPartner:"Предзаполнение из данных банка — максимально простая заявка для клиента",metricBank:"Выпуск полноценной ДК: долгосрочный продукт с потенциалом кросс-продаж"},
+{title:"Выбор доставки пластика",zone:"Банк (WebView)",screen:"delivery",desc:"Выбор отделения или курьерской доставки. После получения пластика — автоматическая привязка к оплате в Burger King",metricPartner:"После активации пластика — автоматическая привязка к оплате в Burger King",metricBank:"Заказ пластика: +64% клиентов → долгосрочная активация и NPS"},
+{title:"Привязка и оплата",zone:"Burger King",screen:"pay",desc:"После активации ДК — автоматическая передача реквизитов и привязка к оплате через API",metricPartner:"LTV клиента +40% за счёт регулярных покупок с коронами",metricBank:"Полноценный активный клиент с ДК, транзакционной историей и балансом"},
+]}
+];
+
+/* ========== BRAND MARKS ========== */
+
+const BKMark=({size=24})=>(
+  <div style={{width:size,height:size,background:D,borderRadius:size*0.22,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"inset 0 0 0 1px rgba(245,235,220,.22)",flexShrink:0}}>
+    <svg width={size*0.68} height={size*0.68} viewBox="0 0 24 24" fill="none">
+      <path d="M3.5 10.5c0-3.6 3.8-6.5 8.5-6.5s8.5 2.9 8.5 6.5v.8h-17v-.8z" fill={Y}/>
+      <rect x="3.5" y="13.2" width="17" height="3" rx="1.5" fill={BG}/>
+      <path d="M3.5 18.2h17v.6c0 1.8-1.5 3.2-3.3 3.2H6.8c-1.8 0-3.3-1.4-3.3-3.2v-.6z" fill={Y}/>
+    </svg>
+  </div>
+);
+
+const Crown=({size=11,color=O})=>(
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color} style={{flexShrink:0}}>
+    <path d="M2.5 7.5l5 4.2L12 4l4.5 7.7 5-4.2-1.9 11.1c-.15.9-.9 1.4-1.8 1.4H6.2c-.9 0-1.65-.5-1.8-1.4L2.5 7.5z"/>
+  </svg>
+);
+
+/* ========== LINE ICONS (monochrome) ========== */
+const Ico=({d,size=22})=>(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">{d}</svg>);
+const ICONS={
+  savings:<><path d="M12 3v4M5 11h14M5 11v8a2 2 0 002 2h10a2 2 0 002-2v-8M5 11a4 4 0 014-4h6a4 4 0 014 4"/><circle cx="16" cy="15" r="1"/></>,
+  users:<><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0M16 11a3 3 0 100-6M21.5 19a4.5 4.5 0 00-6-4.3"/></>,
+  chart:<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></>,
+  refresh:<><path d="M3 12a9 9 0 0115.5-6.3L21 8M21 3v5h-5M21 12a9 9 0 01-15.5 6.3L3 16M3 21v-5h5"/></>,
+  gift:<><path d="M20 12v8H4v-8M2 8h20v4H2zM12 8v13M12 8s-4-5-7-3c-2 1.5-1 5 3 5h4zM12 8s4-5 7-3c2 1.5 1 5-3 5h-4z"/></>,
+  shield:<><path d="M12 3l8 3v6c0 5-3.5 8.5-8 9.5-4.5-1-8-4.5-8-9.5V6l8-3z"/><path d="M9 12l2 2 4-4"/></>,
+  sparkle:<><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></>,
+  card:<><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></>,
+  trend:<><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></>,
+  bank:<><path d="M3 10h18L12 3 3 10zM5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/></>,
+  data:<><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></>,
+  link:<><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></>,
+  partner:<><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2M3 13h18"/></>,
+  building:<><path d="M3 21h18M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/></>,
+};
+
+const benefitsPartner=[
+{icon:"gift",title:"Экономия на эквайринге",desc:"Сниженная ставка за транзакции по Кинг-Карте — экономия до 30% vs обычный interchange"},
+{icon:"users",title:"20 млн готовых клиентов",desc:"Альфа-Банк приводит платёжеспособную аудиторию в канал Burger King"},
+{icon:"trend",title:"Рост среднего чека +18%",desc:"Клиенты с Кинг-Картой тратят больше за счёт корон и скидок"},
+{icon:"refresh",title:"Частота покупок +25%",desc:"Начисление корон Кинг Клуба мотивирует возвращаться в Burger King"},
+{icon:"sparkle",title:"Совместные офферы",desc:"Скидки финансируются банком из экономии на эквайринге, не из маржи Burger King"},
+{icon:"shield",title:"BNPL / рассрочка",desc:"Дополнительный инструмент увеличения конверсии и чека"},
+];
+const benefitsBank=[
+{icon:"users",title:"N2B: новые клиенты",desc:"Привлечение клиентов через Burger King с CAC ≈ 0 ₽ (vs 3 000–5 000 ₽ в прямых каналах)"},
+{icon:"card",title:"Выпуск карт",desc:"Моментальный выпуск ПК/ДК в канале Burger King — конверсия до 50% от входа в воронку"},
+{icon:"chart",title:"Рост TPV",desc:"Объём транзакций по эквайрингу через сеть Burger King"},
+{icon:"savings",title:"Привлечение остатков",desc:"Пополнение карт из других банков — рост балансов на счетах Альфа-Банка"},
+{icon:"data",title:"Данные и аналитика",desc:"Связка «клиент банка — гость Burger King» для таргетированных продуктов"},
+{icon:"link",title:"Кросс-продажи",desc:"Кредиты, страхование, инвестиции — на базе транзакционной истории в Burger King"},
+];
+
+/* ========== PHONE SCREENS ========== */
+
+const ScreenShell=({title,children})=>(
+  <div style={{height:"100%",display:"flex",flexDirection:"column",background:PBG}}>
+    <div style={{padding:"6px 16px 10px",display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:10,fontWeight:600,color:D}}>
+      <span className="num">9:41</span>
+      <div style={{display:"flex",gap:4,alignItems:"center"}}>
+        <svg width="14" height="9" viewBox="0 0 14 9" fill="none"><rect x="0.5" y="0.5" width="10" height="8" rx="1.5" stroke={D}/><rect x="2" y="2" width="7" height="5" fill={D}/><rect x="11.5" y="3" width="1.5" height="3" rx="0.4" fill={D}/></svg>
+      </div>
+    </div>
+    <div style={{padding:"4px 16px 8px",display:"flex",alignItems:"center",gap:8,borderBottom:"1px solid "+G3}}>
+      <BKMark size={20}/>
+      <div style={{fontSize:11,fontWeight:700,color:D,letterSpacing:"-.01em"}}>{title}</div>
+    </div>
+    <div style={{flex:1,overflow:"hidden"}}>{children}</div>
+  </div>
+);
+
+const BTN=(label,primary=true)=>(
+  <div style={{background:primary?Y:CARD,color:D,border:primary?"none":"1px solid "+G3,borderRadius:13,padding:"11px 0",fontWeight:700,fontSize:13,textAlign:"center"}}>{label}</div>
+);
+
+const Row=({l,v,last})=>(
+  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:last?"none":"1px solid "+G3,fontSize:12}}>
+    <span style={{color:G1}}>{l}</span><span style={{fontWeight:600,color:D}} className="num">{v}</span>
+  </div>
+);
+
+const S={
+offer:{title:"Корзина и оплата",content:()=>(
+  <div style={{padding:"12px 14px",display:"flex",flexDirection:"column",gap:10}}>
+    <div style={{background:CARD,borderRadius:16,padding:"12px 14px",boxShadow:"0 2px 8px rgba(80,35,20,.06)"}}>
+      <div style={{fontSize:9,color:G1,textTransform:"uppercase",letterSpacing:".07em",fontWeight:600}}>Ваш заказ</div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:6,gap:8}}>
+        <div style={{fontSize:12,fontWeight:600,color:D,lineHeight:1.25}}>Ангус 4 Сыра<br/><span style={{fontSize:10,color:G1,fontWeight:500}}>2 шт · доставка 0 ₽</span></div>
+        <div style={{textAlign:"right",flexShrink:0}}>
+          <div className="num" style={{fontSize:19,fontWeight:800,color:D,letterSpacing:"-.02em"}}>2 729 ₽</div>
+          <div style={{display:"flex",alignItems:"center",gap:3,justifyContent:"flex-end",marginTop:2}}>
+            <Crown size={9}/><span className="num" style={{fontSize:10,fontWeight:700,color:O}}>или 7 300</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style={{display:"flex",gap:6}}>
+      <div style={{flex:"0 0 auto",background:CARD,border:"1px solid "+G3,borderRadius:11,padding:"8px 14px",fontSize:11,fontWeight:600,color:G1}}>СБП</div>
+      <div style={{flex:1,background:CARD,border:"1px solid "+G3,borderRadius:11,padding:"8px 12px",fontSize:11,fontWeight:600,color:G2,textAlign:"center"}}>+ Новая карта</div>
+    </div>
+    <div style={{background:D,color:BG,borderRadius:16,padding:"14px 14px",position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:10,right:12}}><BKMark size={26}/></div>
+      <div style={{fontSize:9,opacity:.65,textTransform:"uppercase",letterSpacing:".08em",fontWeight:600}}>Вам доступно</div>
+      <div className="num" style={{fontSize:36,fontWeight:800,letterSpacing:"-.03em",lineHeight:1,marginTop:4,color:Y}}>−35%</div>
+      <div style={{fontSize:11,opacity:.75,marginTop:4}}>По Кинг-Карте</div>
+      <div style={{background:Y,color:D,borderRadius:11,padding:"9px 0",marginTop:12,fontWeight:700,fontSize:12,textAlign:"center"}}>Добавить Кинг-Карту</div>
+    </div>
+  </div>)},
+consents:{title:"Оффер + согласия",content:()=>(
+  <div style={{padding:"16px 16px 12px"}}>
+    <div style={{marginBottom:12}}><BKMark size={40}/></div>
+    <div style={{fontSize:17,fontWeight:700,color:D,letterSpacing:"-.02em",lineHeight:1.2}}>Платите Кинг-Картой</div>
+    <div style={{fontSize:11,color:G1,marginTop:4,marginBottom:14}}>Оформите карту и сделайте заказ со скидкой</div>
+    {["Скидка до 35%","Бесплатно навсегда","До 30% коронами"].map((t,i)=>(
+      <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"9px 0",borderTop:i===0?"1px solid "+G3:"none",borderBottom:"1px solid "+G3,fontSize:12,color:D,fontWeight:500}}>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke={O} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>{t}
+      </div>))}
+    <div style={{marginTop:14}}>{BTN("Продолжить")}</div>
+    <div style={{fontSize:8,color:G2,marginTop:10,lineHeight:1.4}}>Нажимая «Продолжить», я подтверждаю согласие с Памяткой ЭДС, СОПД и условиями. Эмитент карты — АО «Альфа-Банк»</div>
+  </div>)},
+phone:{title:"Ввод телефона",content:()=>(
+  <div style={{padding:"16px 16px"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Введите номер телефона</div>
+    <div style={{fontSize:11,color:G1,marginTop:3,marginBottom:14}}>Мы отправим код подтверждения</div>
+    <div style={{borderBottom:"1.5px solid "+D,padding:"6px 0 8px"}}>
+      <div style={{fontSize:9,color:G1,textTransform:"uppercase",letterSpacing:".06em"}}>Номер телефона</div>
+      <div style={{fontSize:18,fontWeight:600,color:D,letterSpacing:".02em",marginTop:2}} className="num">+7 (999) 123-45-67</div>
+    </div>
+    <div style={{marginTop:14}}>{BTN("Продолжить")}</div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:4,marginTop:14}}>
+      {[1,2,3,4,5,6,7,8,9,"",0,"⌫"].map((n,i)=>(
+        <div key={i} className="num" style={{background:n===""?"transparent":CARD,border:n===""?"none":"1px solid "+G3,borderRadius:10,padding:"9px 0",fontSize:15,fontWeight:500,color:D,textAlign:"center"}}>{n}</div>))}
+    </div>
+  </div>)},
+otp:{title:"Код из СМС",content:()=>(
+  <div style={{padding:"16px 16px",textAlign:"center"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Введите код из СМС</div>
+    <div style={{fontSize:11,color:G1,marginTop:3,marginBottom:18}}>Код отправлен на +7 999 123-45-67</div>
+    <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:14}}>
+      {[4,8,2,""].map((d,i)=>(
+        <div key={i} className="num" style={{width:42,height:52,background:CARD,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,fontWeight:700,color:D,border:i===3?"1.5px solid "+O:"1px solid "+G3}}>
+          {d}{i===3&&<span style={{opacity:.35,marginLeft:1}}>|</span>}</div>))}
+    </div>
+    <div style={{fontSize:11,color:O,fontWeight:700}} className="num">Повторно через 0:25</div>
+  </div>)},
+form:{title:"Заполнение анкеты",content:()=>(
+  <div style={{padding:"16px 16px"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Заполните заявку</div>
+    <div style={{fontSize:11,color:G1,marginTop:3,marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
+      <span>Шаг 1 из 2</span>
+      <div style={{flex:1,height:2,background:G3,borderRadius:1,position:"relative"}}>
+        <div style={{position:"absolute",inset:0,width:"50%",background:O,borderRadius:1}}/></div>
+    </div>
+    {[{l:"Фамилия",v:"Иванов"},{l:"Имя",v:"Алексей"},{l:"Отчество",v:"Сергеевич"},{l:"Дата рождения",v:"15.03.1990"}].map((f,i)=>(
+      <div key={i} style={{padding:"7px 0",borderBottom:"1px solid "+G3}}>
+        <div style={{fontSize:9,color:G1,textTransform:"uppercase",letterSpacing:".06em"}}>{f.l}</div>
+        <div style={{fontSize:13,fontWeight:500,color:D,marginTop:1}} className="num">{f.v}</div>
+      </div>))}
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid "+G3}}>
+      <span style={{fontSize:11,color:G1}}>Гражданин РФ?</span>
+      <span style={{fontSize:12,fontWeight:600,color:D,display:"flex",alignItems:"center",gap:4}}>Да
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5L9.5 3" stroke={O} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </span>
+    </div>
+    <div style={{marginTop:14}}>{BTN("Продолжить")}</div>
+  </div>)},
+issued:{title:"Карта выпущена!",content:()=>(
+  <div style={{padding:"16px 16px",textAlign:"center"}}>
+    <div style={{width:44,height:44,border:"1.5px solid "+O,borderRadius:"50%",margin:"0 auto 10px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke={O} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </div>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Цифровая карта выпущена!</div>
+    <div style={{fontSize:11,color:G1,margin:"6px 0 14px",lineHeight:1.4}}>Пополните её и получайте скидку. Закажите пластиковую карту для максимальной выгоды</div>
+    <div style={{background:D,borderRadius:16,padding:"14px 14px",color:BG,textAlign:"left",marginBottom:14,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:12,right:14}}><Crown size={20}/></div>
+      <div style={{fontSize:9,opacity:.65,textTransform:"uppercase",letterSpacing:".08em"}}>Кинг-Карта</div>
+      <div style={{fontSize:15,fontWeight:600,letterSpacing:"0.3em",marginTop:10}} className="num">•••• 4567</div>
+      <div style={{fontSize:10,marginTop:6,opacity:.65}} className="num">Баланс: 0 ₽</div>
+    </div>
+    {BTN("Пополнить")}
+  </div>)},
+topup:{title:"Пополнение (C2B)",content:()=>(
+  <div style={{padding:"16px 16px"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em",marginBottom:12}}>Подтвердите пополнение</div>
+    {[{l:"Сумма",v:"2 500 ₽"},{l:"Комиссия",v:"0 ₽"},{l:"Откуда",v:"Т-Банк ****8901"},{l:"Куда",v:"Кинг-Карта ****4567",last:true}].map((r,i)=>(<Row key={i} l={r.l} v={r.v} last={r.last}/>))}
+    <div style={{marginTop:16}}>{BTN("Продолжить")}</div>
+  </div>)},
+topup_me2me:{title:"Пополнение (me2me)",content:()=>(
+  <div style={{padding:"16px 16px"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Запрос на пополнение</div>
+    <div style={{fontSize:11,color:G1,marginTop:3,marginBottom:12}}>Перевод между своими счетами</div>
+    {[{l:"Сумма",v:"2 729 ₽"},{l:"Банк списания",v:"Альфа-Банк"},{l:"Куда",v:"Кинг-Карта ****4567",last:true}].map((r,i)=>(<Row key={i} l={r.l} v={r.v} last={r.last}/>))}
+    <div style={{marginTop:16}}>{BTN("Подтвердить")}</div>
+  </div>)},
+select:{title:"Выбор карты",content:()=>(
+  <div style={{padding:"16px 16px"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em",marginBottom:12}}>Выберите карту для оплаты</div>
+    {[{n:"Альфа-Карта",num:"****4567",bal:"15 200 ₽",sel:true},{n:"Альфа-Карта",num:"****3456",bal:"1 100 ₽",sel:false}].map((c,i)=>(
+      <div key={i} style={{background:CARD,border:c.sel?"1.5px solid "+O:"1px solid "+G3,borderRadius:14,padding:"10px 12px",marginBottom:8,display:"flex",alignItems:"center",gap:10}}>
+        <div style={{width:36,height:26,background:"#0B0B0B",borderRadius:5,display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{width:10,height:10,borderRadius:3,background:AR}}/></div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:12,fontWeight:600,color:D}}>{c.n}</div>
+          <div style={{fontSize:10,color:G1}} className="num">{c.num} · {c.bal}</div>
+        </div>
+        <div style={{width:16,height:16,borderRadius:"50%",border:"1.5px solid "+(c.sel?O:G3),display:"flex",alignItems:"center",justifyContent:"center"}}>
+          {c.sel&&<div style={{width:8,height:8,borderRadius:"50%",background:O}}/>}
+        </div>
+      </div>))}
+    <div style={{marginTop:10}}>{BTN("К оплате")}</div>
+  </div>)},
+pay:{title:"Оплата со скидкой",content:()=>(
+  <div style={{padding:"14px 16px",textAlign:"center"}}>
+    <div style={{width:40,height:40,border:"1.5px solid "+O,borderRadius:"50%",margin:"0 auto 8px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke={O} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </div>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Готово к оплате!</div>
+    <div style={{fontSize:11,color:G1,margin:"5px 0 12px"}}>Кинг-Карта привязана к чек-ауту</div>
+    <div style={{textAlign:"left",borderTop:"1px solid "+G3,paddingTop:8}}>
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:G1,padding:"5px 0"}}>
+        <span>Заказ</span><span style={{textDecoration:"line-through"}} className="num">2 729 ₽</span></div>
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:D,fontWeight:600,padding:"5px 0"}}>
+        <span>Скидка −35%</span><span className="num">−955 ₽</span></div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:11,padding:"5px 0 7px",borderBottom:"1px solid "+G3}}>
+        <span style={{color:O,fontWeight:600}}>Начислим короны</span>
+        <span style={{display:"flex",alignItems:"center",gap:4}}><Crown size={11}/><span className="num" style={{color:O,fontWeight:700,fontSize:12}}>+532</span></span></div>
+      <div style={{display:"flex",justifyContent:"space-between",padding:"9px 0 0",alignItems:"baseline"}}>
+        <span style={{fontSize:12,fontWeight:600,color:D}}>Итого</span>
+        <span style={{fontSize:22,fontWeight:800,color:D,letterSpacing:"-.02em"}} className="num">1 774 ₽</span></div>
+    </div>
+    <div style={{marginTop:12}}>{BTN("Оплатить 1 774 ₽")}</div>
+  </div>)},
+upsell:{title:"Предложение выпуска",content:()=>(
+  <div style={{padding:"18px 16px",textAlign:"center"}}>
+    <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><BKMark size={40}/></div>
+    <div style={{fontSize:17,fontWeight:700,color:D,letterSpacing:"-.02em",lineHeight:1.2}}>Выпустите бесплатную Кинг-Карту</div>
+    <div style={{fontSize:12,color:G1,margin:"8px 0 16px",lineHeight:1.4}}>и получите повышенную скидку. Карта будет привязана автоматически.</div>
+    {BTN("Оформить карту")}
+  </div>)},
+delivery:{title:"Заказ пластика",content:()=>(
+  <div style={{padding:"16px 16px"}}>
+    <div style={{fontSize:16,fontWeight:700,color:D,letterSpacing:"-.02em"}}>Пластиковая карта заказана</div>
+    <div style={{fontSize:11,color:G1,marginTop:3,marginBottom:12}}>Пришлём СМС, когда карта будет готова</div>
+    <div style={{borderTop:"1px solid "+G3,borderBottom:"1px solid "+G3,padding:"10px 0"}}>
+      <div style={{fontSize:9,color:G1,textTransform:"uppercase",letterSpacing:".06em"}}>Адрес доставки</div>
+      <div style={{fontSize:13,fontWeight:500,color:D,marginTop:2}}>г. Москва, Проспект Победы, д. 16</div>
+      <div style={{fontSize:10,color:G1,marginTop:8}}>Понадобится паспорт</div>
+    </div>
+    <div style={{marginTop:14}}>{BTN("Вернуться к оплате")}</div>
+  </div>)}
+};
+
+/* ========== PHONE FRAME ========== */
+
+function Phone({screenKey,animKey,dirClass}){
+  const s=S[screenKey]||S.offer;
+  return(
+    <div style={{width:276,height:560,borderRadius:40,background:"#241610",padding:9,boxShadow:"0 40px 80px -20px rgba(80,35,20,.3), 0 0 0 1px rgba(80,35,20,.1)",flexShrink:0,position:"relative"}}>
+      {/* side buttons */}
+      <div style={{position:"absolute",left:-2,top:100,width:3,height:28,background:"#31201A",borderRadius:2}}/>
+      <div style={{position:"absolute",left:-2,top:144,width:3,height:48,background:"#31201A",borderRadius:2}}/>
+      <div style={{position:"absolute",left:-2,top:204,width:3,height:48,background:"#31201A",borderRadius:2}}/>
+      <div style={{position:"absolute",right:-2,top:140,width:3,height:76,background:"#31201A",borderRadius:2}}/>
+      <div style={{borderRadius:31,overflow:"hidden",background:PBG,height:"100%",position:"relative"}}>
+        {/* dynamic island */}
+        <div style={{position:"absolute",top:8,left:"50%",transform:"translateX(-50%)",width:88,height:26,background:"#000",borderRadius:14,zIndex:5}}/>
+        <div style={{paddingTop:40,height:"100%",display:"flex",flexDirection:"column"}}>
+          <div key={animKey} className={dirClass} style={{flex:1,minHeight:0}}>
+            <ScreenShell title={s.title}>{s.content()}</ScreenShell>
+          </div>
+          {/* home indicator */}
+          <div style={{height:20,display:"flex",alignItems:"center",justifyContent:"center",background:PBG}}>
+            <div style={{width:100,height:4,background:"#000",borderRadius:2,opacity:.8}}/>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ========== APP ========== */
+
+function App(){
+  const[as,setAs]=useState(0);
+  const[st,setSt]=useState(0);
+  const[sm,setSm]=useState(true);
+  const[dir,setDir]=useState(0); /* 0 — первый рендер без анимации, 1 — вперёд, -1 — назад */
+  const sc=scenarios[as],step=sc.steps[st];
+  useEffect(()=>{setSt(0)},[as]);
+
+  const goStep=n=>{if(n===st||n<0||n>sc.steps.length-1)return;setDir(n>st?1:-1);setSt(n)};
+  const goScenario=i=>{if(i===as)return;setDir(i>as?1:-1);setAs(i);setSt(0)};
+
+  /* Свайп: touchstart/touchend, порог 46px, горизонталь доминирует над вертикалью */
+  const tRef=React.useRef(null);
+  const onTS=e=>{const t=e.touches[0];tRef.current={x:t.clientX,y:t.clientY}};
+  const onTE=e=>{
+    if(!tRef.current)return;
+    const t=e.changedTouches[0];
+    const dx=t.clientX-tRef.current.x,dy=t.clientY-tRef.current.y;
+    tRef.current=null;
+    if(Math.abs(dx)>46&&Math.abs(dx)>Math.abs(dy)*1.15){dx<0?goStep(st+1):goStep(st-1)}
+  };
+  const onTC=()=>{tRef.current=null};
+
+  const animKey=as+"-"+st;
+  const dirClass=dir===1?"scr-fwd":dir===-1?"scr-back":"";
+  const panClass=dir===1?"pan-fwd":dir===-1?"pan-back":"";
+
+  return(
+<div style={{minHeight:"100vh",background:BG,color:D}}>
+
+{/* ============ HERO ============ */}
+<header style={{background:D,color:BG,padding:"28px 40px 36px"}}>
+  <div style={{maxWidth:1280,margin:"0 auto"}}>
+    {/* top row */}
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:16,flexWrap:"wrap",marginBottom:40}}>
+      <div style={{display:"flex",alignItems:"center",gap:12}}>
+        <BKMark size={30}/>
+        <div style={{fontSize:13,fontWeight:600,letterSpacing:"-.01em"}}>Burger King <span style={{color:"rgba(245,235,220,.45)",fontWeight:400}}>× Альфа-Банк xPlatform</span></div>
+      </div>
+      <button onClick={()=>setSm(!sm)} style={{display:"flex",alignItems:"center",gap:8,background:"transparent",border:"1px solid rgba(245,235,220,.22)",padding:"8px 14px",borderRadius:999,fontSize:12,fontWeight:500,transition:"all .18s"}}
+        onMouseEnter={e=>e.currentTarget.style.background="rgba(245,235,220,.07)"}
+        onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
+        <span style={{width:6,height:6,borderRadius:"50%",background:sm?O:"rgba(245,235,220,.3)"}}/>
+        {sm?"Скрыть":"Показать"} метрики
+      </button>
+    </div>
+
+    {/* title */}
+    <div style={{display:"grid",gridTemplateColumns:"minmax(0,1fr) minmax(0,360px)",gap:48,alignItems:"end",marginBottom:36}}
+         className="hero-grid">
+      <div>
+        <div style={{fontSize:11,textTransform:"uppercase",letterSpacing:".18em",color:"rgba(245,235,220,.5)",marginBottom:14,fontWeight:500}}>Customer Journey Map</div>
+        <h1 style={{fontSize:"clamp(40px, 6vw, 76px)",fontWeight:800,letterSpacing:"-.035em",lineHeight:.98,margin:0}}>
+          Burger King <span style={{color:O}}>Pay</span>
+        </h1>
+      </div>
+      <div style={{paddingBottom:14}}>
+        <div style={{fontSize:15,color:"rgba(245,235,220,.75)",lineHeight:1.5,letterSpacing:"-.01em"}}>
+          Интерактивный клиентский путь продукта Burger King Pay — white-label кошелька на платформе Альфа-Банка, встроенного в приложение Burger King. Прототип B2B-интеграции.
+        </div>
+      </div>
+    </div>
+
+    {/* segmented control */}
+    <div>
+      <div style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:"rgba(245,235,220,.45)",marginBottom:10,fontWeight:500}}>Сценарий</div>
+      <div style={{display:"inline-flex",background:"rgba(245,235,220,.06)",border:"1px solid rgba(245,235,220,.14)",borderRadius:16,padding:4,gap:2,flexWrap:"wrap",maxWidth:"100%"}}>
+        {scenarios.map((s,i)=>(
+          <button key={s.id} onClick={()=>goScenario(i)}
+            style={{background:i===as?BG:"transparent",color:i===as?D:"rgba(245,235,220,.72)",padding:"10px 18px",borderRadius:12,fontSize:13,fontWeight:600,letterSpacing:"-.01em",transition:"all .18s",display:"flex",alignItems:"center",gap:8}}>
+            <span style={{display:"inline-flex",width:18,height:18,alignItems:"center",justifyContent:"center",borderRadius:"50%",background:i===as?D:"rgba(245,235,220,.14)",color:i===as?BG:"rgba(245,235,220,.85)",fontSize:10,fontWeight:700}} className="num">{i+1}</span>
+            {s.label}
+          </button>))}
+      </div>
+      <div style={{fontSize:12,color:"rgba(245,235,220,.6)",marginTop:10,letterSpacing:"-.005em"}}>{sc.desc}</div>
+    </div>
+  </div>
+</header>
+
+{/* ============ MAIN ============ */}
+<main style={{maxWidth:1280,margin:"0 auto",padding:"32px 40px 24px"}}>
+
+  {/* progress rail */}
+  <section style={{marginBottom:36}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:14}}>
+      <div style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:G1,fontWeight:600}}>Шаги сценария</div>
+      <div style={{fontSize:11,color:G1,fontWeight:500}} className="num">{st+1} / {sc.steps.length}</div>
+    </div>
+    {/* track */}
+    <div style={{position:"relative",height:2,background:G3,marginBottom:12}}>
+      <div style={{position:"absolute",inset:0,width:`${(st/(sc.steps.length-1))*100}%`,background:R,transition:"width .2s"}}/>
+    </div>
+    {/* step labels */}
+    <div style={{display:"grid",gridTemplateColumns:`repeat(${sc.steps.length}, minmax(0, 1fr))`,gap:4}} className="steps-row">
+      {sc.steps.map((s,i)=>{
+        const active=i===st, past=i<st;
+        return(
+          <button key={i} onClick={()=>goStep(i)}
+            style={{textAlign:"left",padding:"10px 8px 0 0",borderTop:`2px solid ${active?R:past?D:G3}`,marginTop:-1,transition:"all .18s",background:"transparent"}}>
+            <div style={{fontSize:11,fontWeight:600,color:active?R:past?D:G2,letterSpacing:".02em",marginBottom:4}} className="num">
+              {String(i+1).padStart(2,"0")}
+            </div>
+            <div style={{fontSize:12,fontWeight:active?600:500,color:active?D:past?D:G1,lineHeight:1.25,letterSpacing:"-.01em"}}>
+              {s.title}
+            </div>
+          </button>);
+      })}
+    </div>
+  </section>
+
+  {/* work area */}
+  <section style={{display:"grid",gridTemplateColumns:"auto 1fr",gap:56,alignItems:"start",touchAction:"pan-y"}} className="work-grid" onTouchStart={onTS} onTouchEnd={onTE} onTouchCancel={onTC}>
+    {/* phone */}
+    <div style={{display:"flex",justifyContent:"center"}}><Phone screenKey={step.screen} animKey={animKey} dirClass={dirClass}/></div>
+
+    {/* info panel */}
+    <div style={{minWidth:0,paddingTop:8,overflow:"hidden"}}>
+      <div key={"p-"+animKey} className={panClass}>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18,flexWrap:"wrap"}}>
+        <span style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:G1,fontWeight:600}}>Шаг {st+1}</span>
+        <span style={{width:3,height:3,borderRadius:"50%",background:G2}}/>
+        <span style={{fontSize:11,color:D,fontWeight:500,padding:"3px 10px",border:"1px solid "+G3,borderRadius:999}}>{step.zone}</span>
+      </div>
+
+      <h2 style={{fontSize:"clamp(28px, 3.6vw, 44px)",fontWeight:700,letterSpacing:"-.03em",lineHeight:1.05,color:D,margin:"0 0 16px",textWrap:"balance"}}>
+        {step.title}
+      </h2>
+
+      <p style={{fontSize:16,color:G1,lineHeight:1.55,margin:"0 0 28px",letterSpacing:"-.005em",maxWidth:580,textWrap:"pretty"}}>
+        {step.desc}
+      </p>
+
+      {sm&&step.metricPartner&&(
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0,borderTop:"1px solid "+G3,borderBottom:"1px solid "+G3}} className="metrics-grid">
+        <div style={{padding:"22px 24px 22px 0",borderRight:"1px solid "+G3}} className="metric-cell-l">
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+            <span style={{width:5,height:5,background:O,borderRadius:1}}/>
+            <span style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:G1,fontWeight:600}}>Ценность для Burger King</span>
+          </div>
+          <div style={{fontSize:16,color:D,lineHeight:1.4,letterSpacing:"-.01em",fontWeight:500,textWrap:"pretty"}}>
+            {step.metricPartner}
+          </div>
+        </div>
+        <div style={{padding:"22px 0 22px 24px",position:"relative"}} className="metric-cell-r">
+          <div style={{position:"absolute",left:24,top:22,bottom:22,width:2,background:R}}/>
+          <div style={{paddingLeft:14}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+              <span style={{width:5,height:5,background:R,borderRadius:1}}/>
+              <span style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:R,fontWeight:600}}>Ценность для Альфа-Банка</span>
+            </div>
+            <div style={{fontSize:16,color:D,lineHeight:1.4,letterSpacing:"-.01em",fontWeight:500,textWrap:"pretty"}}>
+              {step.metricBank}
+            </div>
+          </div>
+        </div>
+      </div>)}
+
+      </div>
+
+      {/* nav */}
+      <div style={{display:"flex",gap:8,marginTop:32}}>
+        <button disabled={st===0} onClick={()=>goStep(st-1)}
+          style={{display:"flex",alignItems:"center",gap:8,padding:"12px 20px",border:"1px solid "+G3,borderRadius:12,fontSize:13,fontWeight:600,color:st===0?G2:D,background:CARD,cursor:st===0?"default":"pointer",transition:"all .18s",opacity:st===0?.55:1}}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M8.5 3L4.5 7l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          Назад
+        </button>
+        <button disabled={st===sc.steps.length-1} onClick={()=>goStep(st+1)}
+          style={{display:"flex",alignItems:"center",gap:8,padding:"12px 22px",border:"none",borderRadius:12,fontSize:13,fontWeight:700,color:st===sc.steps.length-1?G2:D,background:st===sc.steps.length-1?G3:Y,cursor:st===sc.steps.length-1?"default":"pointer",transition:"all .18s"}}>
+          Далее
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  {/* ============ BENEFITS ============ */}
+  {sm&&(
+  <section style={{marginTop:96}}>
+    <div style={{marginBottom:28}}>
+      <div style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:O,fontWeight:600,marginBottom:10}}>01 / Burger King</div>
+      <h3 style={{fontSize:"clamp(26px, 3vw, 36px)",fontWeight:700,letterSpacing:"-.025em",lineHeight:1.1,color:D,margin:"0 0 8px"}}>Преимущества для Burger King</h3>
+      <div style={{fontSize:14,color:G1,letterSpacing:"-.005em"}}>Что получает бизнес от интеграции Burger King Pay</div>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3, minmax(0, 1fr))",borderTop:"1px solid "+G3}} className="benefits-grid">
+      {benefitsPartner.map((b,i)=>(
+        <div key={i} style={{padding:"26px 24px 28px",borderBottom:"1px solid "+G3,borderRight:(i%3!==2)?"1px solid "+G3:"none"}} className="benefit-cell">
+          <div style={{color:D,marginBottom:16,opacity:.85}}><Ico d={ICONS[b.icon]} size={24}/></div>
+          <div style={{fontSize:16,fontWeight:600,color:D,marginBottom:6,letterSpacing:"-.015em",lineHeight:1.2}}>{b.title}</div>
+          <div style={{fontSize:13,color:G1,lineHeight:1.5,letterSpacing:"-.005em"}}>{b.desc}</div>
+        </div>))}
+    </div>
+
+    <div style={{marginTop:56,marginBottom:28}}>
+      <div style={{fontSize:10,textTransform:"uppercase",letterSpacing:".14em",color:R,fontWeight:600,marginBottom:10}}>02 / Альфа-Банк</div>
+      <h3 style={{fontSize:"clamp(26px, 3vw, 36px)",fontWeight:700,letterSpacing:"-.025em",lineHeight:1.1,color:D,margin:"0 0 8px"}}>Ценность для Альфа-Банка</h3>
+      <div style={{fontSize:14,color:G1,letterSpacing:"-.005em"}}>Стратегические эффекты от канала Burger King</div>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3, minmax(0, 1fr))",borderTop:"1px solid "+G3}} className="benefits-grid">
+      {benefitsBank.map((b,i)=>(
+        <div key={i} style={{padding:"26px 24px 28px",borderBottom:"1px solid "+G3,borderRight:(i%3!==2)?"1px solid "+G3:"none",position:"relative"}} className="benefit-cell">
+          <div style={{color:R,marginBottom:16}}><Ico d={ICONS[b.icon]} size={24}/></div>
+          <div style={{fontSize:16,fontWeight:600,color:D,marginBottom:6,letterSpacing:"-.015em",lineHeight:1.2}}>{b.title}</div>
+          <div style={{fontSize:13,color:G1,lineHeight:1.5,letterSpacing:"-.005em"}}>{b.desc}</div>
+        </div>))}
+    </div>
+  </section>)}
+
+  {/* footer */}
+  <footer style={{marginTop:80,paddingTop:24,borderTop:"1px solid "+G3,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+    <div style={{display:"flex",alignItems:"center",gap:10}}>
+      <BKMark size={22}/>
+      <span style={{fontSize:11,color:G1,fontWeight:500,letterSpacing:"-.005em"}}>Burger King Pay · Эмитент карты — АО «Альфа-Банк» · xPlatform · 2026</span>
+    </div>
+    <span style={{fontSize:11,color:G2,letterSpacing:".02em"}}>v2.1 · Burger King Edition</span>
+  </footer>
+
+</main>
+
+{/* ============ RESPONSIVE ============ */}
+<style>{`
+@media (max-width: 1024px){
+  .hero-grid{grid-template-columns: 1fr !important; gap: 20px !important; align-items: start !important;}
+  .hero-grid > div:last-child{padding-bottom: 0 !important;}
+}
+@media (max-width: 900px){
+  .work-grid{grid-template-columns: 1fr !important; gap: 36px !important;}
+  .benefits-grid{grid-template-columns: repeat(2, minmax(0, 1fr)) !important;}
+  .benefit-cell:nth-child(3n){border-right: 1px solid ${G3} !important;}
+  .benefit-cell:nth-child(2n){border-right: none !important;}
+}
+@media (max-width: 720px){
+  header{padding: 22px 20px 28px !important;}
+  main{padding: 24px 20px 20px !important;}
+  .steps-row{display: flex !important; overflow-x: auto; gap: 8px !important; padding-bottom: 6px;}
+  .steps-row > button{flex: 0 0 130px;}
+  .metrics-grid{grid-template-columns: 1fr !important;}
+  .metric-cell-l{border-right: none !important; border-bottom: 1px solid ${G3} !important; padding: 20px 0 !important;}
+  .metric-cell-r{padding: 20px 0 20px 14px !important;}
+  .metric-cell-r > div:first-child{left: 0 !important;}
+  .metric-cell-r > div:last-child{padding-left: 16px !important;}
+  .benefits-grid{grid-template-columns: 1fr !important;}
+  .benefit-cell{border-right: none !important;}
+}
+@media (max-width: 480px){
+  h1{font-size: 44px !important;}
+}
+`}</style>
+
+</div>);
+}
+
+ReactDOM.render(<App/>,document.getElementById('root'));
+</script>
+</body>
+</html>
