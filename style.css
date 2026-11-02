@@ -153,3 +153,4 @@
 .connection-form-title{font-size:24px;margin:20px 0 12px;letter-spacing:-.7px}
 #cart-dialog .connection-progress{margin-top:6px}
 #cart-dialog .checkout-step-rail + .connection-back{margin-top:-8px}
+@media(max-width:600px){header{height:118px;flex-wrap:wrap;gap:8px}header nav{order:3;width:100%;overflow-x:auto;gap:22px;padding:4px 0;white-space:nowrap}header nav a:nth-child(n){display:block;font-size:12px}html{scroll-padding-top:136px}.filters button{min-height:44px}input,select,#journey-phone-content .phone-input{font-size:16px}.connection-consent input{min-width:20px;min-height:20px}}
