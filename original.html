@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Burger King Pay — Customer Journey Map</title>
+<meta name="description" content="Интерактивный клиентский путь кошелька Burger King Pay — white-label кошелька Альфа-Банка для Burger King">
+<meta name="theme-color" content="#F8F0E1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23FFAA00'/><g fill='%23502314'><path d='M14 29.5c0-7.6 8.1-13.5 18-13.5s18 5.9 18 13.5v1.7H14v-1.7z'/><rect x='14' y='35.4' width='36' height='6.2' rx='3.1'/><path d='M14 45.8h36v1.1c0 3.9-3.2 7.1-7.1 7.1H21.1c-3.9 0-7.1-3.2-7.1-7.1v-1.1z'/></g></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F0E1; --bg-warm:#F5EBDC; --surface-1:#F1E5CF; --surface-2:#E9D9BC; --surface-3:#E0CDA9;
+  --line-1:rgba(80,35,20,0.08); --line-2:rgba(80,35,20,0.14); --line-3:rgba(80,35,20,0.24);
+  --ink-1:#502314; --ink-2:rgba(80,35,20,0.68); --ink-3:rgba(80,35,20,0.46); --ink-4:rgba(80,35,20,0.28);
+  --bk:#FFAA00; --bk-deep:#F29100; --bk-soft:#FFE2A6; --bk-card:#FFC64D; --bk-glow:rgba(255,170,0,0.5);
+  --red:#D62300; --orange:#FF8732;
+  --phone-bg:#FDF8EE; --phone-surf:#F5EBDC; --phone-text-1:#502314; --phone-text-2:#9A7B5F; --phone-text-3:#C2A987; --phone-line-1:#EDE0C8;
+  --font-body:'Onest',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --radius-sm:8px; --radius:12px; --radius-lg:20px; --radius-xl:28px;
+  --ease-silky:cubic-bezier(0.16,1,0.3,1); --ease-swift:cubic-bezier(0.4,0,0.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink-1)}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);font-feature-settings:"ss01","cv01";-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer;letter-spacing:inherit}
+button:focus{outline:none}
+button:focus-visible{outline:2px solid var(--ink-1);outline-offset:3px;border-radius:4px}
+::selection{background:var(--bk);color:var(--ink-1)}
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(80,35,20,0.12);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(80,35,20,0.22)}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.mono{font-family:var(--font-mono);font-feature-settings:"tnum"}
+.mesh-base{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60vw 60vw at 88% -8%, rgba(255,170,0,0.16), transparent 55%),radial-gradient(50vw 50vw at -8% 18%, rgba(255,170,0,0.10), transparent 60%),radial-gradient(70vw 45vw at 50% 112%, rgba(255,170,0,0.08), transparent 55%)}
+.mesh-orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:0.5}
+.mesh-orb.a{width:460px;height:460px;top:-140px;right:-80px;background:radial-gradient(circle, rgba(255,170,0,0.6) 0%, rgba(255,170,0,0) 70%);animation:orbA 20s ease-in-out infinite alternate}
+.mesh-orb.b{width:380px;height:380px;top:34vh;left:-150px;background:radial-gradient(circle, rgba(255,170,0,0.4) 0%, rgba(255,170,0,0) 70%);animation:orbB 24s ease-in-out infinite alternate}
+@keyframes orbA{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-70px,50px) scale(1.12)}}
+@keyframes orbB{0%{transform:translate(0,0) scale(1)}100%{transform:translate(100px,-30px) scale(0.92)}}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.035;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.spotlight{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(300px 300px at var(--mx,50%) var(--my,30%), rgba(255,170,0,0.10), transparent 70%);transition:background 80ms linear}
+#root{position:relative;z-index:2}
+.eyebrow{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:var(--ink-3);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:24px;height:3px;background:var(--bk);border-radius:1px}
+.eyebrow.no-mark::before{display:none}
+.dot{display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--ink-4);vertical-align:middle}
+.mark-hl{position:relative;display:inline-block}
+.mark-hl>span{position:relative;z-index:1}
+.mark-hl::after{content:"";position:absolute;left:-0.04em;right:-0.04em;bottom:0.1em;height:0.36em;background:var(--bk);z-index:0;border-radius:2px}
+.phone-screen{background:var(--phone-bg);color:var(--phone-text-1);height:100%;display:flex;flex-direction:column}
+.phone-status{padding:6px 16px 8px;display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:600;color:var(--phone-text-1)}
+.phone-titlebar{padding:4px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--phone-line-1)}
+.mobile-step-nav{display:none}
+@media (max-width:960px){
+  .mobile-step-nav{display:inline-flex;align-items:center;gap:14px;padding:6px 6px;background:var(--bg);border:1px solid var(--line-2);border-radius:99px;box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+  .mobile-step-nav button{width:40px;height:40px;border-radius:50%;border:none;background:var(--surface-1);color:var(--ink-1);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .15s ease;-webkit-tap-highlight-color:transparent}
+  .mobile-step-nav button:not(:disabled):active{transform:scale(0.94)}
+  .mobile-step-nav button:not(:disabled):hover{background:var(--ink-1);color:#fff}
+  .mobile-step-nav button:disabled{opacity:.3;cursor:default}
+  .mobile-step-nav .counter{font-size:14px;color:var(--ink-2);font-weight:600;letter-spacing:0.02em;min-width:60px;text-align:center}
+}
+@media (max-width:1100px){.hero-grid{grid-template-columns:1fr !important;gap:28px !important;align-items:start !important}}
+@media (max-width:960px){
+  .work-grid{grid-template-columns:1fr !important;gap:48px !important}
+  .work-grid>*:first-child{display:flex;justify-content:center}
+  .bento-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
+  .bento-grid>.b-large{grid-column:span 2 !important;grid-row:span 1 !important}
+}
+@media (max-width:720px){
+  .hero{padding:72px 20px 40px !important}
+  .section{padding-left:20px !important;padding-right:20px !important}
+  .step-rail{display:flex !important;grid-template-columns:none !important;gap:10px !important;overflow-x:auto;padding-bottom:10px !important;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+  .step-rail-item{flex:0 0 140px !important;min-width:140px !important;scroll-snap-align:start}
+  .metrics-grid{grid-template-columns:1fr !important}
+  .metrics-grid>.m-r{padding-left:0 !important;padding-top:24px !important;border-left:none !important;border-top:1px solid var(--line-2) !important}
+  .bento-grid{grid-template-columns:1fr !important}
+  .bento-grid>.b-large{grid-column:span 1 !important}
+  h1.display{font-size:46px !important;letter-spacing:-0.04em !important}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/framer-motion@11.18.2/dist/framer-motion.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#F8F0E1">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#F8F0E1"/>
+    <text x="118" y="392" fill="#502314" font-family="system-ui" font-weight="800" font-size="88" letter-spacing="-3">Burger King</text>
+    <rect x="672" y="304" width="196" height="112" rx="12" fill="#FFAA00"/>
+    <text x="700" y="392" fill="#502314" font-family="system-ui" font-weight="800" font-size="88" letter-spacing="-3">Pay</text>
+    <text x="122" y="470" fill="rgba(80,35,20,0.5)" font-family="system-ui" font-size="26">Альфа-Банк × Burger King · Customer Journey Map</text>
+  </svg>
+</template>
+<div class="mesh-base"></div>
+<div class="mesh-orb a"></div>
+<div class="mesh-orb b"></div>
+<div class="grain"></div>
+<div class="spotlight" id="spotlight"></div>
+<div id="root"></div>
+<script type="text/babel" data-presets="env,react">
+const { useState, useEffect, useRef } = React;
+const { motion, AnimatePresence, useTransform, useSpring, useMotionValue, useInView, LayoutGroup } = window.Motion;
+
+const SPRING = { silky:{type:"spring",stiffness:120,damping:22,mass:0.8}, snappy:{type:"spring",stiffness:380,damping:32} };
+const EASE = [0.16, 1, 0.3, 1];
+
+/* ===== BRAND MARK ===== */
+function BKMark({size=22, bg="var(--bk)", ink="var(--ink-1)", flat=false, radius=14}){
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" style={{display:"block",flexShrink:0}}>
+      {!flat && <rect width="64" height="64" rx={radius} fill={bg}/>}
+      <g fill={ink}>
+        <path d="M14 29.5c0-7.6 8.1-13.5 18-13.5s18 5.9 18 13.5v1.7H14v-1.7z"/>
+        <rect x="14" y="35.4" width="36" height="6.2" rx="3.1"/>
+        <path d="M14 45.8h36v1.1c0 3.9-3.2 7.1-7.1 7.1H21.1c-3.9 0-7.1-3.2-7.1-7.1v-1.1z"/>
+      </g>
+    </svg>
+  );
+}
+function QRish({size=120, color="#502314", bg="transparent"}){
+  const n=21, cell=size/n, mods=[];
+  const inFinder=(r,c)=>{const f=(R,C)=>r>=R&&r<R+7&&c>=C&&c<C+7;return f(0,0)||f(0,n-7)||f(n-7,0);};
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){ if(inFinder(r,c))continue; if(((r*5+c*3+r*c+r)%4)===0) mods.push([r,c]); }
+  const finder=(R,C,k)=>(
+    <g key={k}>
+      <rect x={C*cell} y={R*cell} width={7*cell} height={7*cell} fill={color}/>
+      <rect x={(C+1)*cell} y={(R+1)*cell} width={5*cell} height={5*cell} fill={bg==="transparent"?"#fff":bg}/>
+      <rect x={(C+2)*cell} y={(R+2)*cell} width={3*cell} height={3*cell} fill={color}/>
+    </g>
+  );
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} shapeRendering="crispEdges" style={{display:"block"}}>
+      {bg!=="transparent" && <rect width={size} height={size} fill={bg}/>}
+      {mods.map(([r,c],i)=><rect key={i} x={c*cell} y={r*cell} width={cell} height={cell} fill={color}/>)}
+      {finder(0,0,"a")}{finder(0,n-7,"b")}{finder(n-7,0,"c")}
+    </svg>
+  );
+}
+
+/* ===== JOURNEY DATA ===== */
+const journeys=[
+{id:"new",group:"journey",label:"Новый клиент",desc:"Выпуск кошелька Burger King Pay · пополнение · оплата",steps:[
+  {title:"Точка входа",zone:"Burger King",screen:"ga_checkout",desc:"Клиент оформляет заказ в приложении Burger King. На чек-ауте — оффер «+100 корон при оплате Burger King Pay», встроенный в оформление заказа.",metricPartner:"Рост конверсии чек-аута: бонусный оффер в момент оплаты",metricBank:"Присутствие Burger King Pay в покупательском пути Burger King"},
+  {title:"Оффер + согласия",zone:"Burger King → Банк",screen:"offer_consents",desc:"Экран оффера: короны за каждую оплату кошельком. Согласие клиента на передачу реквизитов и банковской тайны, памятка ЭДС, СОПД.",metricPartner:"Бонусы для клиента — за счёт экономии на эквайринге, а не из маржи Burger King",metricBank:"Подключение к Burger King Pay прямо в канале Burger King"},
+  {title:"Идентификация клиента",zone:"Банк",screen:"identify",desc:"Ввод номера телефона и кода из СМС. Идентификация реализуется во встроенном WebView либо нативно — полностью в контуре приложения Burger King.",metricPartner:"Идентификация за секунды — клиент не покидает приложение",metricBank:"Идентификация без визита в отделение"},
+  {title:"Анкета на открытие",zone:"Банк",screen:"form",desc:"ФИО и дата рождения. Поля предзаполнены из данных Burger King — клиенту не нужно вводить вручную.",metricPartner:"Заявка занимает меньше минуты — поля предзаполнены",metricBank:"Выпуск кошелька без отделения и курьера"},
+  {title:"Кошелёк выпущен",zone:"Банк",screen:"issued",desc:"Моментальный выпуск кошелька Burger King Pay с предложением пополнить и оплатить. Без выпуска пластика.",metricPartner:"Клиент готов к оплате сразу после выпуска",metricBank:"Моментальный выпуск кошелька Burger King Pay"},
+  {title:"Пополнение кошелька",zone:"Банк",screen:"topup_c2b",desc:"Пополнение кошелька с карты другого банка через платёжный шлюз (C2B). Достаточно суммы заказа.",metricPartner:"Оплата проходит здесь же — клиент не уходит с чек-аута",metricBank:"Рост остатков на кошельках Burger King Pay"},
+  {title:"Привязка к Burger King Pay",zone:"Банк → Burger King",screen:"bind",desc:"Реквизиты кошелька автоматически передаются в Burger King. Burger King Pay появляется как способ оплаты — без ручного ввода реквизитов.",metricPartner:"Привязка автоматическая — без ручного ввода реквизитов",metricBank:"Burger King Pay закрепляется как способ оплаты в Burger King"},
+  {title:"Оплата на чек-ауте",zone:"Burger King",screen:"pay_bonus",desc:"Клиент платит кошельком Burger King Pay. Вместо скидки — начисление корон: +100 за оплату. Заказ оплачен.",metricPartner:"Начисление корон повышает ценность каждой покупки",metricBank:"Активный кошелёк — начало транзакционной активности"},
+]},
+{id:"existing",group:"journey",label:"Действующий клиент",desc:"Подключение кошелька · выбор карты · оплата",steps:[
+  {title:"Точка входа",zone:"Burger King",screen:"ga_checkout",desc:"На чек-ауте Burger King — оффер «+100 корон при оплате Burger King Pay». Клиент уже клиент Альфа-Банка.",metricPartner:"Готовая база клиентов Альфа-Банка — простое подключение Burger King Pay",metricBank:"Рост активности клиентов через новый канал"},
+  {title:"Оффер + согласия",zone:"Burger King → Банк",screen:"offer_consents",desc:"Оффер коронами + согласие клиента на передачу реквизитов и банковской тайны.",metricPartner:"Оплата Burger King Pay выгоднее для Burger King, чем сторонние способы оплаты на чек-ауте",metricBank:"Рост доли Burger King Pay в платёжном миксе Burger King"},
+  {title:"Идентификация клиента",zone:"Банк",screen:"identify",desc:"Ввод номера телефона и кода из СМС. Реализация — во встроенном WebView либо нативно в приложении Burger King.",metricPartner:"Быстрая привязка — клиент остаётся в приложении Burger King",metricBank:"Связка «клиент банка — гость Burger King» для аналитики"},
+  {title:"Выбор карты",zone:"Банк",screen:"select_card",desc:"Клиент выбирает любую активную карту Альфа-Банка или выпускает новую — если не хочет привязывать действующую. Реализация: WebView либо нативно в контуре Burger King.",metricPartner:"Автоматическая привязка карты — без ручного ввода реквизитов",metricBank:"Данные о предпочтительной карте клиента в Burger King"},
+  {title:"Кошелёк подключён",zone:"Банк",screen:"wallet_ready",desc:"Кошелёк Burger King Pay подключён к выбранной карте клиента в один шаг.",metricPartner:"Кошелёк подключён к карте клиента в один шаг",metricBank:"Готовый к оплате кошелёк Burger King Pay"},
+  {title:"Пополнение кошелька",zone:"Банк",screen:"topup_me2me",desc:"Если на карте недостаточно средств — пополнение между своими счетами (me2me) прямо в процессе.",metricPartner:"Клиент пополняет кошелёк при нехватке средств — не уходит с чек-аута",metricBank:"Консолидация остатков клиента в Burger King Pay"},
+  {title:"Оплата на чек-ауте",zone:"Burger King",screen:"pay_bonus",desc:"Клиент платит Burger King Pay. Начисление корон за оплату — без явной скидки.",metricPartner:"Совместная лояльность повышает частоту повторных покупок",metricBank:"Рост оборота по эквайрингу через канал Burger King"},
+]},
+{id:"no_card",group:"journey",label:"Без активной карты",desc:"Идентификация · выпуск кошелька · оплата",steps:[
+  {title:"Точка входа",zone:"Burger King",screen:"ga_checkout",desc:"Информер о повышенных бонусах при оплате Burger King Pay на чек-ауте Burger King.",metricPartner:"Возврат «спящих» клиентов через канал Burger King",metricBank:"Повторная активация клиента без затрат на ремаркетинг"},
+  {title:"Оффер + согласия",zone:"Burger King → Банк",screen:"offer_consents",desc:"Оффер + согласия. Банк определяет клиента по ID клиента в Банке — действующий клиент без активного кошелька.",metricPartner:"Лояльный клиент с банковской историей",metricBank:"Идентификация по ID клиента в Банке — без полной анкеты"},
+  {title:"Идентификация клиента",zone:"Банк",screen:"identify",desc:"Ввод номера телефона и кода из СМС. WebView либо нативная реализация в приложении Burger King.",metricPartner:"Идентификация за секунды в приложении Burger King",metricBank:"Быстрая идентификация действующего клиента"},
+  {title:"Предложение открыть кошелёк",zone:"Банк",screen:"upsell",desc:"«Откройте бесплатный кошелёк Burger King Pay и получайте короны». Выпуск кошелька Burger King Pay — без пластика на старте.",metricPartner:"Бонусы привязаны к новому кошельку — мотивация к покупке",metricBank:"Конверсия в выпуск кошелька выше прямых каналов"},
+  {title:"Анкета на открытие",zone:"Банк",screen:"form",desc:"Заполнение анкеты для выпуска кошелька. ФИО предзаполнены из данных банка.",metricPartner:"Простая заявка — поля предзаполнены из данных банка",metricBank:"Полноценный кошелёк с потенциалом кросс-продаж"},
+  {title:"Кошелёк выпущен",zone:"Банк",screen:"issued",desc:"Выпуск кошелька Burger King Pay. Клиент платит кошельком Burger King Pay — с тем же набором преимуществ.",metricPartner:"Клиент платит кошельком Burger King Pay сразу после выпуска",metricBank:"Активация кошелька в день выпуска"},
+  {title:"Пополнение кошелька",zone:"Банк",screen:"topup_c2b",desc:"Пополнение кошелька с карты другого банка (C2B). Сумма заказа доступна для оплаты здесь же.",metricPartner:"Сумма заказа доступна для оплаты здесь же",metricBank:"Рост остатков на кошельках Burger King Pay"},
+  {title:"Заказ пластика",zone:"Банк",screen:"delivery",desc:"Заказ пластиковой карты курьером или в отделении. После активации — автоматическая привязка к способу оплаты Burger King Pay.",metricPartner:"Пластик с предустановленной привязкой к Burger King Pay",metricBank:"Долгосрочная активация клиента"},
+  {title:"Привязка и оплата",zone:"Burger King",screen:"pay_bonus",desc:"После активации кошелька — автоматическая передача реквизитов и привязка к способу оплаты Burger King Pay. Оплата с начислением корон.",metricPartner:"Регулярные покупки с начислением корон",metricBank:"Активный клиент с кошельком и транзакционной историей"},
+]},
+{id:"payment",group:"capability",label:"Оплата кошельком",desc:"Оплата Burger King Pay в онлайне и офлайне",variants:{
+  online:[
+    {title:"Клиент выбрал товар",zone:"Burger King · online",screen:"shop_product",desc:"Клиент выбирает товар в приложении Burger King. Подсвечивается выгода оплаты через Burger King Pay: +100 корон.",metricPartner:"Выгода Burger King Pay видна уже в карточке товара",metricBank:"Узнаваемость Burger King Pay в каталоге Burger King"},
+    {title:"Добавил в корзину",zone:"Burger King · online",screen:"cart",desc:"Товар в корзине. Баннер «+100 корон при оплате Burger King Pay» рядом с итоговой суммой.",metricPartner:"Бонусный баннер в корзине — стимул завершить заказ",metricBank:"Напоминание о Burger King Pay в корзине"},
+    {title:"Перешёл в оформление",zone:"Burger King · online",screen:"checkout_methods",desc:"Оформление заказа, выбор способа оплаты среди СБП, SberPay, Яндекс Пэй и Burger King Pay.",metricPartner:"Burger King Pay — в списке способов оплаты",metricBank:"Присутствие среди привычных способов оплаты"},
+    {title:"Burger King Pay предустановлен",zone:"Burger King · online",screen:"method_selected",desc:"Burger King Pay выбран способом оплаты по умолчанию — клиенту не нужно искать его в списке.",metricPartner:"Предустановленный способ оплаты ускоряет чек-аут",metricBank:"Приоритет Burger King Pay по умолчанию"},
+    {title:"Оплатил Burger King Pay",zone:"Burger King · online",screen:"paid",desc:"Оплата прошла в один тап. +100 корон начислено на счёт лояльности.",metricPartner:"Оплата в один тап, бонусы начислены",metricBank:"Завершённая транзакция по Burger King Pay"},
+  ],
+  offline:[
+    {title:"Карта лояльности",zone:"Burger King · offline",screen:"qr_loyalty",desc:"Клиент на кассе открывает карту лояльности Burger King с QR-кодом в приложении.",metricPartner:"Привычная карта лояльности Burger King",metricBank:"Единый QR для оплаты и лояльности"},
+    {title:"Кассир считывает QR",zone:"Касса · offline",screen:"cashier",desc:"Кассир считывает QR-код — одновременно проходит оплата Burger King Pay и начисление/списание корон.",metricPartner:"Оплата и бонусы — одним действием на кассе",metricBank:"Оплата Burger King Pay в офлайне"},
+    {title:"Готово",zone:"Burger King · offline",screen:"offline_done",desc:"Покупка оплачена, короны начислены — одним действием, без отдельной карты.",metricPartner:"Быстрая касса — клиент доволен",metricBank:"Бесшовный офлайн-сценарий Burger King Pay"},
+  ]
+}},
+{id:"manage",group:"capability",label:"Управление",desc:"Управление кошельком Burger King Pay в профиле клиента",steps:[
+  {title:"Доступ в профиле",zone:"Burger King",screen:"profile_access",desc:"Кошелёк Burger King Pay доступен в профиле клиента в приложении Burger King — рядом с коронами и картой Кинг Клуба.",metricPartner:"Кошелёк всегда под рукой в приложении Burger King",metricBank:"Регулярные заходы в Burger King Pay"},
+  {title:"Управление кошельком",zone:"Кошелёк",screen:"wallet_home",desc:"Баланс корон, история операций и быстрые действия с картой на главном экране кошелька.",metricPartner:"Прозрачный баланс корон и история операций",metricBank:"Вовлечённость в кошелёк"},
+  {title:"Пополнение / перевод",zone:"Кошелёк",screen:"wallet_topup",desc:"Пополнить со счёта в другом банке, со счёта в Альфа-Банке или настроить автопополнение.",metricPartner:"Пополнение в пару тапов — деньги готовы к покупке",metricBank:"Рост остатков на кошельке"},
+  {title:"Действия с картой",zone:"Кошелёк",screen:"wallet_actions",desc:"Изменить пин-код, заморозить или закрыть карту, посмотреть тарифы и условия, настроить автопополнение.",metricPartner:"Полное самообслуживание по карте",metricBank:"Снижение нагрузки на поддержку"},
+  {title:"Реквизиты",zone:"Кошелёк",screen:"wallet_requisites",desc:"Просмотр и копирование реквизитов карты — номер, срок, CVC под защитой.",metricPartner:"Реквизиты под рукой для любых платежей",metricBank:"Удобство использования кошелька"},
+]},
+];
+const benefitsClient=[
+  {icon:"gift",title:"Короны за каждую оплату",desc:"+100 корон при оплате Burger King Pay и бонусы за каждую покупку — копятся в Кинг Клубе",accent:"+100"},
+  {icon:"wallet",title:"Кошелёк без пластика",desc:"Burger King Pay выпускается моментально — платить можно сразу, без ожидания карты"},
+  {icon:"refresh",title:"Улучшенные сценарии оплаты",desc:"Онлайн и офлайн, единый QR лояльности и оплаты"},
+  {icon:"sparkle",title:"Моментальное пополнение",desc:"С карты другого банка или со счёта в Альфа-Банке — в пару тапов"},
+];
+const benefitsPartner=[
+  {icon:"trend",title:"Экономия на эквайринге",desc:"Оплата через Burger King Pay выгоднее для Burger King, чем сторонние способы на чек-ауте",accent:"эквайринг"},
+  {icon:"users",title:"Новые клиенты",desc:"Готовая аудитория Альфа-Банка подключается прямо в канале Burger King"},
+  {icon:"chart",title:"Частота покупок и средний чек",desc:"Совместная лояльность мотивирует возвращаться и покупать больше"},
+  {icon:"sparkle",title:"Совместные предложения",desc:"Бонусы клиенту финансируются за счёт экономии на эквайринге — не из маржи Burger King"},
+];
+const benefitsBank=[
+  {icon:"refresh",title:"Рост транзакционного оборота",desc:"Розничный оборот по эквайрингу через канал Burger King",accent:"РТО"},
+  {icon:"users",title:"Новые клиенты",desc:"Подключение клиентов к Burger King Pay в покупательском пути Burger King"},
+  {icon:"savings",title:"Доход от остатков на счетах",desc:"Пополнение кошельков и рост балансов на счетах Альфа-Банка"},
+  {icon:"data",title:"Данные и кросс-продажи",desc:"Связка «клиент банка — гость Burger King» для новых продуктов"},
+];
+
+/* ===== ICONS ===== */
+const Ico=({d,size=22,stroke=1.6})=>(
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">{d}</svg>
+);
+const ICONS={
+  savings:<><path d="M12 3v4M5 11h14M5 11v8a2 2 0 002 2h10a2 2 0 002-2v-8M5 11a4 4 0 014-4h6a4 4 0 014 4"/><circle cx="16" cy="15" r="1"/></>,
+  users:<><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0M16 11a3 3 0 100-6M21.5 19a4.5 4.5 0 00-6-4.3"/></>,
+  chart:<><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></>,
+  refresh:<><path d="M3 12a9 9 0 0115.5-6.3L21 8M21 3v5h-5M21 12a9 9 0 01-15.5 6.3L3 16M3 21v-5h5"/></>,
+  gift:<><path d="M20 12v8H4v-8M2 8h20v4H2zM12 8v13M12 8s-4-5-7-3c-2 1.5-1 5 3 5h4zM12 8s4-5 7-3c2 1.5 1 5-3 5h-4z"/></>,
+  sparkle:<><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></>,
+  card:<><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></>,
+  wallet:<><path d="M3 7a2 2 0 012-2h12a2 2 0 012 2M3 7v10a2 2 0 002 2h14a2 2 0 002-2v-6a2 2 0 00-2-2H5a2 2 0 01-2-2zM17 13h.01"/></>,
+  trend:<><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></>,
+  data:<><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></>,
+  arrow_r:<><path d="M5 12h14M13 5l7 7-7 7"/></>,
+  arrow_l:<><path d="M19 12H5M11 5l-7 7 7 7"/></>,
+  restart:<><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.5M3 3v4h4"/></>,
+};
+
+/* ===== HOOKS ===== */
+function useReveal(once=true, amount=0.2){
+  const ref = useRef(null);
+  const inView = useInView(ref, { once, amount });
+  return [ref, inView];
+}
+function useGlobalSpotlight(){
+  useEffect(()=>{
+    const el = document.getElementById('spotlight');
+    if(!el) return;
+    const onMove=(e)=>{ el.style.setProperty('--mx', e.clientX+'px'); el.style.setProperty('--my', e.clientY+'px'); };
+    window.addEventListener('mousemove', onMove);
+    return ()=>window.removeEventListener('mousemove', onMove);
+  },[]);
+}
+
+/* ===== PHONE PRIMITIVES ===== */
+const PRow = ({l,v,last,strong})=>(
+  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:last?"none":"1px solid var(--phone-line-1)",fontSize:12}}>
+    <span style={{color:"var(--phone-text-2)"}}>{l}</span>
+    <span className="num" style={{fontWeight:strong?700:600,color:"var(--phone-text-1)"}}>{v}</span>
+  </div>
+);
+const PBtn = (label,kind="dark")=>(
+  <div style={{
+    background: kind==="dark"?"var(--ink-1)":kind==="bk"?"var(--bk)":"#fff",
+    color: kind==="dark"?"#fff":"var(--ink-1)",
+    border: kind==="ghost"?"1px solid var(--phone-line-1)":"none",
+    borderRadius:11,padding:"12px 0",fontWeight:600,fontSize:13,textAlign:"center"
+  }}>{label}</div>
+);
+const Bonus = ({txt="+100 корон при оплате Burger King Pay"})=>(
+  <div style={{background:"var(--bk)",borderRadius:11,padding:"11px 12px",display:"flex",alignItems:"center",gap:9}}>
+    <BKMark size={22} radius={6}/>
+    <div style={{fontSize:11.5,fontWeight:700,color:"var(--ink-1)",lineHeight:1.25,letterSpacing:"-.01em"}}>{txt}</div>
+  </div>
+);
+const WalletCard = ({balance="0 ₽",num="•••• 4567",soft=false})=>(
+  <div style={{background:soft?"var(--bk-card)":"var(--bk)",borderRadius:14,padding:"13px 14px",position:"relative",overflow:"hidden"}}>
+    <div style={{position:"absolute",top:12,right:13}}><BKMark size={20} bg="transparent" flat={true} ink="var(--ink-1)"/></div>
+    <div style={{fontSize:9,opacity:.7,textTransform:"uppercase",letterSpacing:".1em",color:"var(--ink-1)",fontWeight:700}}>Burger King Pay</div>
+    <div className="num" style={{fontSize:15,fontWeight:700,letterSpacing:"0.22em",marginTop:14,color:"var(--ink-1)"}}>{num}</div>
+    <div className="num" style={{fontSize:11,marginTop:6,color:"var(--ink-1)",opacity:.7,fontWeight:600}}>Баланс · {balance}</div>
+  </div>
+);
+const TickCircle = ()=>(
+  <div style={{width:46,height:46,background:"var(--bk)",borderRadius:"50%",margin:"0 auto 12px",display:"flex",alignItems:"center",justifyContent:"center"}}>
+    <svg width="20" height="20" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="#502314" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+  </div>
+);
+const PTitle = ({t,s})=>(
+  <React.Fragment>
+    <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em",lineHeight:1.2}}>{t}</div>
+    {s&&<div style={{fontSize:11,color:"var(--phone-text-2)",marginTop:4}}>{s}</div>}
+  </React.Fragment>
+);
+
+/* ===== SCREENS ===== */
+const SCREENS = {
+  ga_checkout:{title:"Чек-аут · Burger King", render:()=>(
+    <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:11}}>
+      <div style={{display:"flex",alignItems:"center",gap:8}}>
+        <div style={{width:22,height:22,borderRadius:6,background:"var(--ink-1)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <span style={{color:"var(--bk)",fontWeight:800,fontSize:11}}>BK</span>
+        </div>
+        <span style={{fontSize:11,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:".02em"}}>Burger King</span>
+      </div>
+      <div style={{border:"1px solid var(--phone-line-1)",borderRadius:12,padding:"11px 13px"}}>
+        <div style={{fontSize:10,color:"var(--phone-text-2)",textTransform:"uppercase",letterSpacing:".06em"}}>Ваш заказ</div>
+        <div style={{fontSize:11,color:"var(--phone-text-1)",marginTop:5,fontWeight:500}}>Кинг Бокс · набор</div>
+        <div className="num" style={{fontSize:22,fontWeight:800,color:"var(--phone-text-1)",letterSpacing:"-.02em",marginTop:4}}>2 729 ₽</div>
+      </div>
+      <Bonus/>
+      <div style={{marginTop:2}}>{PBtn("Оформить заказ","dark")}</div>
+    </div>
+  )},
+  offer_consents:{title:"Оффер + согласия", render:()=>(
+    <div style={{padding:"15px 16px"}}>
+      <BKMark size={38} radius={11}/>
+      <div style={{fontSize:17,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em",lineHeight:1.2,marginTop:11}}>Платите через Burger King Pay</div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",marginTop:4,marginBottom:12}}>Подключите кошелёк и получайте короны за каждую оплату</div>
+      {["+100 корон за оплату","Бесплатно навсегда","Короны за каждую покупку"].map((t,i)=>(
+        <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderTop:i===0?"1px solid var(--phone-line-1)":"none",borderBottom:"1px solid var(--phone-line-1)",fontSize:12,color:"var(--phone-text-1)",fontWeight:500}}>
+          <span style={{width:16,height:16,borderRadius:"50%",background:"var(--bk)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-6" stroke="#502314" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </span>{t}
+        </div>))}
+      <div style={{marginTop:13}}>{PBtn("Продолжить","dark")}</div>
+      <div style={{fontSize:8,color:"var(--phone-text-3)",marginTop:9,lineHeight:1.4}}>Нажимая «Продолжить», я даю согласие на передачу реквизитов и банковской тайны, подтверждаю Памятку ЭДС и СОПД</div>
+    </div>
+  )},
+  identify:{title:"Идентификация клиента", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Идентификация клиента" s="Введите номер — пришлём код из СМС"/>
+      <div style={{borderBottom:"1.5px solid var(--phone-text-1)",padding:"10px 0 8px",marginTop:14}}>
+        <div style={{fontSize:9,color:"var(--phone-text-2)",textTransform:"uppercase",letterSpacing:".06em"}}>Номер телефона</div>
+        <div className="num" style={{fontSize:18,fontWeight:600,color:"var(--phone-text-1)",letterSpacing:".02em",marginTop:2}}>+7 (999) 123-45-67</div>
+      </div>
+      <div style={{display:"flex",gap:7,justifyContent:"center",margin:"16px 0 6px"}}>
+        {[4,8,2,""].map((d,i)=>(
+          <div key={i} className="num" style={{width:40,height:48,background:"var(--phone-surf)",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,fontWeight:700,color:"var(--phone-text-1)",border:i===3?"1.5px solid var(--ink-1)":"1px solid var(--phone-line-1)"}}>
+            {d}{i===3&&<span style={{opacity:.35,marginLeft:1}}>|</span>}</div>))}
+      </div>
+      <div className="num" style={{fontSize:11,color:"var(--phone-text-2)",fontWeight:600,textAlign:"center",marginBottom:12}}>Код из СМС · повторно через 0:25</div>
+      {PBtn("Подтвердить","dark")}
+    </div>
+  )},
+  form:{title:"Анкета на открытие", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Заполните заявку"/>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",marginTop:6,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
+        <span>Шаг 1 из 2</span>
+        <div style={{flex:1,height:3,background:"var(--phone-line-1)",borderRadius:2,position:"relative"}}>
+          <div style={{position:"absolute",inset:0,width:"50%",background:"var(--bk)",borderRadius:2}}/></div>
+      </div>
+      {[{l:"Фамилия",v:"Купреев"},{l:"Имя",v:"Роман"},{l:"Отчество",v:"Александрович"},{l:"Дата рождения",v:"15.03.1990"}].map((f,i)=>(
+        <div key={i} style={{padding:"7px 0",borderBottom:"1px solid var(--phone-line-1)"}}>
+          <div style={{fontSize:9,color:"var(--phone-text-2)",textTransform:"uppercase",letterSpacing:".06em"}}>{f.l}</div>
+          <div className="num" style={{fontSize:13,fontWeight:500,color:"var(--phone-text-1)",marginTop:1}}>{f.v}</div>
+        </div>))}
+      <div style={{fontSize:9,color:"var(--phone-text-3)",margin:"8px 0 12px"}}>Поля предзаполнены из данных Burger King</div>
+      {PBtn("Открыть кошелёк","dark")}
+    </div>
+  )},
+  issued:{title:"Кошелёк выпущен", render:()=>(
+    <div style={{padding:16,textAlign:"center"}}>
+      <TickCircle/>
+      <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>Кошелёк Burger King Pay выпущен</div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",margin:"6px 0 13px",lineHeight:1.4}}>Пополните кошелёк и оплачивайте покупки с коронами</div>
+      <div style={{marginBottom:13,textAlign:"left"}}><WalletCard balance="0 ₽"/></div>
+      <div style={{display:"flex",gap:8}}>
+        <div style={{flex:1}}>{PBtn("Пополнить","dark")}</div>
+        <div style={{flex:1}}>{PBtn("Оплатить","bk")}</div>
+      </div>
+    </div>
+  )},
+  topup_c2b:{title:"Пополнение кошелька", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Пополнение кошелька" s="С карты другого банка"/>
+      <div style={{marginTop:12,marginBottom:12}}><WalletCard balance="0 ₽" soft={true}/></div>
+      {[{l:"Сумма",v:"2 729 ₽"},{l:"Комиссия",v:"0 ₽"},{l:"Откуда",v:"Т-Банк ····8901"},{l:"Куда",v:"Burger King Pay ····4567",last:true}].map((r,i)=>(<PRow key={i} {...r}/>))}
+      <div style={{marginTop:14}}>{PBtn("Пополнить и оплатить","dark")}</div>
+    </div>
+  )},
+  bind:{title:"Привязка к Burger King Pay", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Способ оплаты" s="Burger King Pay привязан автоматически"/>
+      <div style={{marginTop:12}}>
+        {[{n:"Burger King Pay",sel:true,tag:"ga"},{n:"СБП",sel:false},{n:"SberPay",sel:false},{n:"Яндекс Пэй",sel:false}].map((m,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 12px",borderRadius:11,marginBottom:7,border:m.sel?"1.5px solid var(--ink-1)":"1px solid var(--phone-line-1)",background:m.sel?"var(--phone-surf)":"#fff"}}>
+            {m.tag==="ga"?<BKMark size={22} radius={6}/>:<div style={{width:22,height:22,borderRadius:6,background:"var(--phone-surf)",border:"1px solid var(--phone-line-1)"}}/>}
+            <span style={{flex:1,fontSize:13,fontWeight:m.sel?700:500,color:"var(--phone-text-1)"}}>{m.n}</span>
+            <span style={{width:16,height:16,borderRadius:"50%",border:"1.5px solid "+(m.sel?"var(--ink-1)":"var(--phone-line-1)"),display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {m.sel&&<span style={{width:8,height:8,borderRadius:"50%",background:"var(--ink-1)"}}/>}</span>
+          </div>))}
+      </div>
+      <div style={{marginTop:6}}>{PBtn("Продолжить","dark")}</div>
+    </div>
+  )},
+  pay_bonus:{title:"Оплата на чек-ауте", render:()=>(
+    <div style={{padding:16,textAlign:"center"}}>
+      <TickCircle/>
+      <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>Заказ оплачен</div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",margin:"6px 0 13px"}}>Оплата прошла через Burger King Pay</div>
+      <div style={{textAlign:"left",borderTop:"1px solid var(--phone-line-1)",paddingTop:8}}>
+        <PRow l="Сумма заказа" v="2 729 ₽"/>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid var(--phone-line-1)"}}>
+          <span style={{fontSize:12,color:"var(--phone-text-1)",fontWeight:600}}>Начислено корон</span>
+          <span className="num" style={{background:"var(--bk)",borderRadius:8,padding:"3px 9px",fontSize:12,fontWeight:800,color:"var(--ink-1)"}}>+100</span>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",padding:"11px 0 0",alignItems:"baseline"}}>
+          <span style={{fontSize:12,fontWeight:600,color:"var(--phone-text-1)"}}>Оплачено</span>
+          <span className="num" style={{fontSize:22,fontWeight:800,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>2 729 ₽</span>
+        </div>
+      </div>
+    </div>
+  )},
+  select_card:{title:"Выбор карты", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Выберите карту в кошельке" s="Или выпустите новую"/>
+      <div style={{marginTop:12}}>
+        {[{n:"Карта Альфа-Банка",num:"····4567",bal:"15 200 ₽",sel:true},{n:"Карта Альфа-Банка",num:"····3456",bal:"1 100 ₽",sel:false}].map((c,i)=>(
+          <div key={i} style={{background:c.sel?"var(--phone-surf)":"#fff",border:c.sel?"1.5px solid var(--ink-1)":"1px solid var(--phone-line-1)",borderRadius:11,padding:"10px 12px",marginBottom:8,display:"flex",alignItems:"center",gap:10}}>
+            <div style={{width:34,height:24,background:"var(--ink-1)",borderRadius:4,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <div style={{width:9,height:9,borderRadius:2,background:"var(--bk)"}}/></div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:12,fontWeight:600,color:"var(--phone-text-1)"}}>{c.n}</div>
+              <div className="num" style={{fontSize:10,color:"var(--phone-text-2)"}}>{c.num} · {c.bal}</div>
+            </div>
+            <span style={{width:16,height:16,borderRadius:"50%",border:"1.5px solid "+(c.sel?"var(--ink-1)":"var(--phone-line-1)"),display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {c.sel&&<span style={{width:8,height:8,borderRadius:"50%",background:"var(--ink-1)"}}/>}</span>
+          </div>))}
+        <div style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:11,border:"1px dashed var(--line-3)"}}>
+          <div style={{width:34,height:24,borderRadius:4,border:"1px dashed var(--line-3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:"var(--phone-text-2)",fontWeight:300}}>+</div>
+          <span style={{flex:1,fontSize:12,fontWeight:600,color:"var(--phone-text-1)"}}>Выпустить новую карту</span>
+        </div>
+      </div>
+      <div style={{marginTop:12}}>{PBtn("К оплате","dark")}</div>
+    </div>
+  )},
+  wallet_ready:{title:"Кошелёк подключён", render:()=>(
+    <div style={{padding:16,textAlign:"center"}}>
+      <TickCircle/>
+      <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>Burger King Pay подключён</div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",margin:"6px 0 13px",lineHeight:1.4}}>Кошелёк привязан к выбранной карте Альфа-Банка</div>
+      <div style={{textAlign:"left"}}><WalletCard balance="15 200 ₽"/></div>
+      <div style={{marginTop:13}}>{PBtn("Перейти к оплате","dark")}</div>
+    </div>
+  )},
+  topup_me2me:{title:"Пополнение кошелька", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Пополнение кошелька" s="Между своими счетами · me2me"/>
+      <div style={{marginTop:12,marginBottom:12}}><WalletCard balance="1 100 ₽" soft={true}/></div>
+      {[{l:"Сумма",v:"1 700 ₽"},{l:"Банк списания",v:"Альфа-Банк"},{l:"Куда",v:"Burger King Pay ····4567",last:true}].map((r,i)=>(<PRow key={i} {...r}/>))}
+      <div style={{marginTop:14}}>{PBtn("Подтвердить пополнение","dark")}</div>
+    </div>
+  )},
+  upsell:{title:"Предложение открыть кошелёк", render:()=>(
+    <div style={{padding:"18px 16px",textAlign:"center"}}>
+      <div style={{display:"flex",justifyContent:"center",marginBottom:12}}><BKMark size={42} radius={12}/></div>
+      <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em",lineHeight:1.25}}>Откройте кошелёк Burger King Pay</div>
+      <div style={{fontSize:12,color:"var(--phone-text-2)",margin:"8px 0 14px",lineHeight:1.45}}>Бесплатно, без пластика на старте. Получайте короны за каждую оплату.</div>
+      <Bonus txt="+100 корон за первую оплату"/>
+      <div style={{marginTop:13}}>{PBtn("Открыть кошелёк","dark")}</div>
+    </div>
+  )},
+  delivery:{title:"Заказ пластика", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Пластиковая карта" s="Курьером или в отделении"/>
+      <div style={{marginTop:12}}>
+        {[{n:"Курьером",d:"завтра, бесплатно",sel:true},{n:"В отделении",d:"сегодня, рядом с вами",sel:false}].map((o,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"11px 12px",borderRadius:11,marginBottom:8,border:o.sel?"1.5px solid var(--ink-1)":"1px solid var(--phone-line-1)",background:o.sel?"var(--phone-surf)":"#fff"}}>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:o.sel?700:500,color:"var(--phone-text-1)"}}>{o.n}</div>
+              <div style={{fontSize:10,color:"var(--phone-text-2)"}}>{o.d}</div>
+            </div>
+            <span style={{width:16,height:16,borderRadius:"50%",border:"1.5px solid "+(o.sel?"var(--ink-1)":"var(--phone-line-1)"),display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {o.sel&&<span style={{width:8,height:8,borderRadius:"50%",background:"var(--ink-1)"}}/>}</span>
+          </div>))}
+      </div>
+      <div style={{fontSize:9,color:"var(--phone-text-3)",margin:"4px 0 12px"}}>Цифровой кошелёк уже активен — оплата доступна сейчас</div>
+      {PBtn("Заказать карту","dark")}
+    </div>
+  )},
+  shop_product:{title:"Витрина · Burger King", render:()=>(
+    <div style={{padding:"14px 16px"}}>
+      <div style={{height:150,borderRadius:14,background:"linear-gradient(135deg,var(--surface-2),var(--surface-1))",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:12,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:10,left:10,background:"var(--red)",borderRadius:7,padding:"3px 9px",fontSize:9,fontWeight:800,color:"#fff",letterSpacing:".02em"}}>ХИТ</div>
+        <svg width="58" height="58" viewBox="0 0 64 64" fill="var(--ink-3)"><path d="M14 29.5c0-7.6 8.1-13.5 18-13.5s18 5.9 18 13.5v1.7H14v-1.7z"/><rect x="14" y="35.4" width="36" height="6.2" rx="3.1"/><path d="M14 45.8h36v1.1c0 3.9-3.2 7.1-7.1 7.1H21.1c-3.9 0-7.1-3.2-7.1-7.1v-1.1z"/></svg>
+      </div>
+      <div style={{fontSize:10,color:"var(--phone-text-2)",fontWeight:600,textTransform:"uppercase",letterSpacing:".06em"}}>Наборы · Кинг Бокс</div>
+      <div style={{fontSize:15,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em",margin:"3px 0 8px",lineHeight:1.25}}>Кинг Бокс — 4 бургера + Кинг Фри</div>
+      <div style={{display:"flex",alignItems:"baseline",gap:8,marginBottom:10}}>
+        <span className="num" style={{fontSize:22,fontWeight:800,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>2 729 ₽</span>
+        <span style={{fontSize:11,color:"var(--phone-text-3)"}}>в наличии</span>
+      </div>
+      <div style={{marginBottom:12}}><Bonus txt="+100 корон на счёт лояльности при оплате Burger King Pay"/></div>
+      {PBtn("В корзину","dark")}
+    </div>
+  )},
+  cart:{title:"Корзина", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Корзина" s="1 набор · Burger King"/>
+      <div style={{display:"flex",gap:11,padding:"12px 0",borderBottom:"1px solid var(--phone-line-1)",marginTop:8}}>
+        <div style={{width:46,height:46,borderRadius:10,background:"var(--surface-2)",flexShrink:0}}/>
+        <div style={{flex:1}}>
+          <div style={{fontSize:12,fontWeight:600,color:"var(--phone-text-1)",lineHeight:1.3}}>Кинг Бокс — 4 бургера + Кинг Фри</div>
+          <div style={{fontSize:10,color:"var(--phone-text-2)",marginTop:2}}>1 набор</div>
+        </div>
+        <div className="num" style={{fontSize:13,fontWeight:700,color:"var(--phone-text-1)"}}>2 729 ₽</div>
+      </div>
+      <div style={{marginTop:6}}>
+        <PRow l="Товары" v="2 729 ₽"/>
+        <PRow l="Доставка" v="бесплатно"/>
+        <PRow l="К оплате" v="2 729 ₽" last={true} strong={true}/>
+      </div>
+      <div style={{margin:"12px 0"}}><Bonus/></div>
+      {PBtn("Перейти к оплате","dark")}
+    </div>
+  )},
+  checkout_methods:{title:"Способ оплаты", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Способ оплаты" s="К оплате 2 729 ₽"/>
+      <div style={{marginTop:12}}>
+        {[{n:"Burger King Pay",d:"+100 корон · кошелёк",sel:true,mark:true},{n:"Картой онлайн",d:"Visa · Mastercard · Мир",sel:false},{n:"СБП",d:"по QR-коду",sel:false}].map((o,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:11,padding:"12px",borderRadius:12,marginBottom:8,border:o.sel?"1.5px solid var(--ink-1)":"1px solid var(--phone-line-1)",background:o.sel?"var(--phone-surf)":"#fff"}}>
+            {o.mark?<BKMark size={26} radius={7}/>:<div style={{width:26,height:26,borderRadius:7,background:"var(--surface-2)"}}/>}
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:o.sel?700:600,color:"var(--phone-text-1)"}}>{o.n}</div>
+              <div style={{fontSize:10,color:o.mark?"var(--ink-1)":"var(--phone-text-2)",fontWeight:o.mark?600:400}}>{o.d}</div>
+            </div>
+            <span style={{width:18,height:18,borderRadius:"50%",border:"1.5px solid "+(o.sel?"var(--ink-1)":"var(--phone-line-1)"),display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {o.sel&&<span style={{width:9,height:9,borderRadius:"50%",background:"var(--ink-1)"}}/>}</span>
+          </div>))}
+      </div>
+      <div style={{marginTop:6}}>{PBtn("Оплатить Burger King Pay","dark")}</div>
+    </div>
+  )},
+  method_selected:{title:"Подтверждение оплаты", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Оплата кошельком" s="Burger King Pay ····4567"/>
+      <div style={{margin:"12px 0"}}><WalletCard balance="4 500 ₽"/></div>
+      <PRow l="К оплате" v="2 729 ₽"/>
+      <PRow l="Спишется с кошелька" v="2 729 ₽"/>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"none"}}>
+        <span style={{fontSize:12,color:"var(--phone-text-1)",fontWeight:600}}>Начислим корон</span>
+        <span className="num" style={{background:"var(--bk)",borderRadius:8,padding:"3px 9px",fontSize:12,fontWeight:800,color:"var(--ink-1)"}}>+100</span>
+      </div>
+      <div style={{marginTop:12}}>{PBtn("Подтвердить оплату","dark")}</div>
+    </div>
+  )},
+  paid:{title:"Оплачено", render:()=>(
+    <div style={{padding:16,textAlign:"center"}}>
+      <TickCircle/>
+      <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>Оплачено</div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",margin:"6px 0 13px"}}>Оплата прошла через Burger King Pay</div>
+      <div style={{textAlign:"left",borderTop:"1px solid var(--phone-line-1)",paddingTop:8}}>
+        <PRow l="Сумма заказа" v="2 729 ₽"/>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid var(--phone-line-1)"}}>
+          <span style={{fontSize:12,color:"var(--phone-text-1)",fontWeight:600}}>Начислено корон</span>
+          <span className="num" style={{background:"var(--bk)",borderRadius:8,padding:"3px 9px",fontSize:12,fontWeight:800,color:"var(--ink-1)"}}>+100</span>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-between",padding:"11px 0 0",alignItems:"baseline"}}>
+          <span style={{fontSize:12,fontWeight:600,color:"var(--phone-text-1)"}}>Остаток в кошельке</span>
+          <span className="num" style={{fontSize:18,fontWeight:800,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>1 771 ₽</span>
+        </div>
+      </div>
+    </div>
+  )},
+  qr_loyalty:{title:"QR лояльности и оплаты", render:()=>(
+    <div style={{padding:16}}>
+      <div style={{background:"var(--bk)",borderRadius:16,padding:"16px 14px",textAlign:"center"}}>
+        <div style={{fontSize:10,fontWeight:800,color:"var(--ink-1)",textTransform:"uppercase",letterSpacing:".1em",opacity:.75}}>Burger King Pay · единый код</div>
+        <div style={{background:"#fff",borderRadius:13,padding:14,margin:"12px auto",width:"fit-content"}}>
+          <QRish size={132} color="#502314" bg="#fff"/>
+        </div>
+        <div className="num" style={{fontSize:13,fontWeight:700,color:"var(--ink-1)",letterSpacing:".14em"}}>•••• •••• •••• 4567</div>
+        <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:9,background:"rgba(80,35,20,0.08)",borderRadius:9,padding:"5px 11px"}}>
+          <span style={{fontSize:11,fontWeight:600,color:"var(--ink-1)"}}>Короны</span>
+          <span className="num" style={{fontSize:13,fontWeight:800,color:"var(--ink-1)"}}>956</span>
+        </div>
+      </div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",textAlign:"center",marginTop:12,lineHeight:1.4}}>Покажите код на кассе Burger King —<br/>спишется оплата и начислятся короны</div>
+    </div>
+  )},
+  cashier:{title:"Касса · Burger King", render:()=>(
+    <div style={{padding:16}}>
+      <div style={{borderRadius:16,border:"1px solid var(--phone-line-1)",overflow:"hidden"}}>
+        <div style={{background:"var(--ink-1)",padding:"16px 14px",textAlign:"center"}}>
+          <div style={{fontSize:10,color:"rgba(255,255,255,0.55)",textTransform:"uppercase",letterSpacing:".1em",fontWeight:700}}>Терминал · Burger King</div>
+          <div style={{margin:"12px auto 0",width:54,height:54,borderRadius:13,background:"var(--bk)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <BKMark size={34} bg="transparent" flat={true} ink="var(--ink-1)"/>
+          </div>
+          <div className="num" style={{color:"#fff",fontSize:24,fontWeight:800,marginTop:12,letterSpacing:"-.02em"}}>2 729 ₽</div>
+          <div style={{color:"rgba(255,255,255,0.6)",fontSize:11,marginTop:2}}>сканирование QR Burger King Pay</div>
+        </div>
+        <div style={{padding:"13px 14px",background:"#fff"}}>
+          <div style={{display:"flex",alignItems:"center",gap:9}}>
+            <span style={{width:22,height:22,borderRadius:"50%",background:"var(--bk)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <svg width="12" height="12" viewBox="0 0 18 18" fill="none"><path d="M4 9l3.5 3.5L14 6" stroke="#502314" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </span>
+            <div style={{fontSize:12,fontWeight:700,color:"var(--phone-text-1)"}}>Оплата принята · короны начислены</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )},
+  offline_done:{title:"Оплата в магазине", render:()=>(
+    <div style={{padding:16,textAlign:"center"}}>
+      <TickCircle/>
+      <div style={{fontSize:16,fontWeight:700,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>Покупка оплачена</div>
+      <div style={{fontSize:11,color:"var(--phone-text-2)",margin:"6px 0 13px"}}>Оплата на кассе через Burger King Pay</div>
+      <div style={{marginBottom:12}}><Bonus txt="+100 корон начислено в Burger King"/></div>
+      <div style={{textAlign:"left",borderTop:"1px solid var(--phone-line-1)",paddingTop:6}}>
+        <PRow l="Магазин" v="Burger King"/>
+        <PRow l="Сумма" v="2 729 ₽"/>
+        <PRow l="Остаток в кошельке" v="1 771 ₽" last={true} strong={true}/>
+      </div>
+    </div>
+  )},
+  profile_access:{title:"Профиль · Burger King", render:()=>(
+    <div style={{padding:16}}>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:14}}>
+        <div style={{width:48,height:48,borderRadius:"50%",background:"var(--ink-1)",color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,fontSize:16}}>РК</div>
+        <div>
+          <div style={{fontSize:15,fontWeight:700,color:"var(--phone-text-1)"}}>Роман Купреев</div>
+          <div style={{fontSize:11,color:"var(--phone-text-2)"}}>+7 ••• ••• 45 67</div>
+        </div>
+      </div>
+      <div style={{display:"flex",gap:9,marginBottom:14}}>
+        <div style={{flex:1,background:"var(--bk)",borderRadius:13,padding:"12px"}}>
+          <div className="num" style={{fontSize:20,fontWeight:800,color:"var(--ink-1)",letterSpacing:"-.02em"}}>956</div>
+          <div style={{fontSize:10,fontWeight:600,color:"var(--ink-1)",opacity:.7}}>корон</div>
+        </div>
+        <div style={{flex:1,background:"var(--phone-surf)",borderRadius:13,padding:"12px"}}>
+          <div className="num" style={{fontSize:20,fontWeight:800,color:"var(--phone-text-1)",letterSpacing:"-.02em"}}>4</div>
+          <div style={{fontSize:10,fontWeight:600,color:"var(--phone-text-2)"}}>заказа в месяц</div>
+        </div>
+      </div>
+      <div style={{display:"flex",alignItems:"center",gap:11,padding:"13px 13px",borderRadius:13,border:"1px solid var(--phone-line-1)"}}>
+        <div style={{width:30,height:30,borderRadius:8,background:"var(--bk)",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <BKMark size={20} bg="transparent" flat={true} ink="var(--ink-1)"/>
+        </div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13,fontWeight:700,color:"var(--phone-text-1)"}}>Кошелёк Burger King Pay</div>
+          <div style={{fontSize:10,color:"var(--phone-text-2)"}}>Открыть и управлять</div>
+        </div>
+        <span style={{color:"var(--phone-text-3)"}}><Ico d={ICONS.arrow_r} size={18}/></span>
+      </div>
+    </div>
+  )},
+  wallet_home:{title:"Кошелёк Burger King Pay", render:()=>(
+    <div style={{padding:16}}>
+      <WalletCard balance="4 500 ₽"/>
+      <div style={{display:"flex",gap:8,margin:"13px 0"}}>
+        {[{l:"Пополнить",i:"savings"},{l:"Перевести",i:"refresh"},{l:"Действия",i:"wallet"}].map((a,i)=>(
+          <div key={i} style={{flex:1,background:"var(--phone-surf)",borderRadius:12,padding:"11px 6px",textAlign:"center"}}>
+            <div style={{display:"flex",justifyContent:"center",color:"var(--ink-1)",marginBottom:5}}><Ico d={ICONS[a.i]} size={19}/></div>
+            <div style={{fontSize:10.5,fontWeight:600,color:"var(--phone-text-1)"}}>{a.l}</div>
+          </div>))}
+      </div>
+      <div style={{fontSize:11,fontWeight:700,color:"var(--phone-text-2)",textTransform:"uppercase",letterSpacing:".05em",margin:"4px 0 4px"}}>История</div>
+      {[{n:"Burger King",d:"Оплата заказа",v:"−2 729 ₽",b:false},{n:"Пополнение",d:"со счёта в Альфа-Банке",v:"+1 700 ₽",b:true},{n:"Короны",d:"начислено за оплату",v:"+100",b:false,bon:true}].map((t,i)=>(
+        <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:i<2?"1px solid var(--phone-line-1)":"none"}}>
+          <div style={{width:30,height:30,borderRadius:9,background:t.bon?"var(--bk)":"var(--surface-2)",flexShrink:0}}/>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:600,color:"var(--phone-text-1)"}}>{t.n}</div>
+            <div style={{fontSize:10,color:"var(--phone-text-2)"}}>{t.d}</div>
+          </div>
+          <div className="num" style={{fontSize:12,fontWeight:700,color:t.b?"var(--ink-1)":t.bon?"var(--ink-1)":"var(--phone-text-1)"}}>{t.v}</div>
+        </div>))}
+    </div>
+  )},
+  wallet_topup:{title:"Пополнение кошелька", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Пополнить кошелёк" s="Burger King Pay ····4567"/>
+      <div style={{marginTop:12}}>
+        {[{n:"Со счёта в другом банке",d:"по СБП · мгновенно",mark:false},{n:"Со счёта в Альфа-Банке",d:"между своими · me2me",mark:true},{n:"Автопополнение",d:"при балансе ниже порога",mark:false}].map((o,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:11,padding:"12px",borderRadius:12,marginBottom:8,border:o.mark?"1.5px solid var(--ink-1)":"1px solid var(--phone-line-1)",background:o.mark?"var(--phone-surf)":"#fff"}}>
+            <div style={{width:30,height:30,borderRadius:8,background:o.mark?"var(--bk)":"var(--surface-2)",display:"flex",alignItems:"center",justifyContent:"center",color:"var(--ink-1)"}}>
+              <Ico d={ICONS[o.mark?"refresh":"savings"]} size={17}/>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontSize:13,fontWeight:o.mark?700:600,color:"var(--phone-text-1)"}}>{o.n}</div>
+              <div style={{fontSize:10,color:"var(--phone-text-2)"}}>{o.d}</div>
+            </div>
+            <span style={{color:"var(--phone-text-3)"}}><Ico d={ICONS.arrow_r} size={16}/></span>
+          </div>))}
+      </div>
+      <div style={{fontSize:9,color:"var(--phone-text-3)",marginTop:4}}>Лимит пополнения по СБП — 15 000 ₽ за операцию</div>
+    </div>
+  )},
+  wallet_actions:{title:"Действия с кошельком", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Действия" s="Управление кошельком Burger King Pay"/>
+      <div style={{marginTop:10}}>
+        {[{n:"Реквизиты кошелька",i:"card"},{n:"Изменить ПИН-код",i:"refresh"},{n:"Автопополнение",i:"savings"},{n:"Заморозить кошелёк",i:"wallet"},{n:"Тарифы и условия",i:"data"},{n:"Закрыть кошелёк",i:"arrow_r",danger:true}].map((a,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"center",gap:11,padding:"13px 2px",borderBottom:i<5?"1px solid var(--phone-line-1)":"none"}}>
+            <div style={{width:30,height:30,borderRadius:8,background:"var(--phone-surf)",display:"flex",alignItems:"center",justifyContent:"center",color:a.danger?"var(--red)":"var(--ink-1)"}}>
+              <Ico d={ICONS[a.i]} size={17}/>
+            </div>
+            <div style={{flex:1,fontSize:13,fontWeight:600,color:a.danger?"var(--red)":"var(--phone-text-1)"}}>{a.n}</div>
+            {!a.danger&&<span style={{color:"var(--phone-text-3)"}}><Ico d={ICONS.arrow_r} size={16}/></span>}
+          </div>))}
+      </div>
+    </div>
+  )},
+  wallet_requisites:{title:"Реквизиты кошелька", render:()=>(
+    <div style={{padding:16}}>
+      <PTitle t="Реквизиты" s="Виртуальная карта Burger King Pay"/>
+      <div style={{margin:"12px 0"}}><WalletCard balance="4 500 ₽" num="4790 •••• •••• 4567"/></div>
+      {[{l:"Номер карты",v:"4790 12•• •••• 4567",copy:true},{l:"Срок действия",v:"08 / 29"},{l:"CVC",v:"•••",eye:true}].map((r,i)=>(
+        <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 0",borderBottom:i<2?"1px solid var(--phone-line-1)":"none"}}>
+          <span style={{fontSize:12,color:"var(--phone-text-2)"}}>{r.l}</span>
+          <span style={{display:"flex",alignItems:"center",gap:8}}>
+            <span className="num" style={{fontSize:12.5,fontWeight:600,color:"var(--phone-text-1)"}}>{r.v}</span>
+            {r.copy&&<span style={{color:"var(--phone-text-3)"}}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg></span>}
+            {r.eye&&<span style={{color:"var(--phone-text-3)"}}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="2.5"/></svg></span>}
+          </span>
+        </div>))}
+      <div style={{marginTop:14}}>{PBtn("Скопировать реквизиты","ghost")}</div>
+    </div>
+  )},
+};
+
+/* ============================================================
+   PHONE — device frame (warm cream, BK glow, BKMark titlebar)
+   ============================================================ */
+function Phone({screenKey}){
+  const screen = SCREENS[screenKey] || SCREENS.ga_checkout;
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rotY = useTransform(mx, [-1, 1], [8, -8]);
+  const rotX = useTransform(my, [-1, 1], [-6, 6]);
+  const sRotY = useSpring(rotY, { stiffness:120, damping:16, mass:0.6 });
+  const sRotX = useSpring(rotX, { stiffness:120, damping:16, mass:0.6 });
+  const ref = useRef(null);
+  const onMove = (e)=>{
+    const r = ref.current.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    mx.set((e.clientX - cx) / (r.width/2));
+    my.set((e.clientY - cy) / (r.height/2));
+  };
+  const onLeave = ()=>{ mx.set(0); my.set(0); };
+
+  return (
+    <div style={{perspective:1200, position:"relative", padding:"40px 20px", width:"100%", display:"flex", justifyContent:"center"}}>
+      <div style={{position:"absolute", width:380, height:580, borderRadius:"50%", background:"radial-gradient(circle, rgba(242,145,0,0.42) 0%, rgba(242,145,0,0) 65%)", filter:"blur(46px)", zIndex:0, top:"50%", left:"50%", transform:"translate(-50%,-50%)", pointerEvents:"none"}}/>
+      <motion.div
+        ref={ref}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        style={{
+          rotateY:sRotY, rotateX:sRotX, transformStyle:"preserve-3d",
+          width:296, height:600, borderRadius:48,
+          background:"linear-gradient(180deg, #3A2417 0%, #1B0F09 100%)",
+          padding:11, position:"relative", flexShrink:0,
+          boxShadow:`0 1px 0 rgba(255,255,255,0.10) inset, 0 0 0 1px rgba(80,35,20,0.06), 0 30px 60px -20px rgba(80,35,20,0.35), 0 60px 120px -30px rgba(242,145,0,0.28), 0 100px 180px -50px rgba(242,145,0,0.16)`
+        }}
+        initial={{opacity:0, y:40, scale:0.96}}
+        animate={{opacity:1, y:0, scale:1}}
+        transition={{...SPRING.silky, delay:0.3}}>
+        <div style={{position:"absolute",left:-2,top:108,width:3,height:30,background:"#2B1A10",borderRadius:2}}/>
+        <div style={{position:"absolute",left:-2,top:154,width:3,height:52,background:"#2B1A10",borderRadius:2}}/>
+        <div style={{position:"absolute",left:-2,top:218,width:3,height:52,background:"#2B1A10",borderRadius:2}}/>
+        <div style={{position:"absolute",right:-2,top:150,width:3,height:80,background:"#2B1A10",borderRadius:2}}/>
+        <div style={{borderRadius:37, overflow:"hidden", background:"var(--phone-bg)", height:"100%", position:"relative"}}>
+          <div style={{position:"absolute",top:9,left:"50%",transform:"translateX(-50%)",width:96,height:28,background:"#000",borderRadius:14,zIndex:5}}/>
+          <div style={{paddingTop:42,height:"100%",display:"flex",flexDirection:"column"}}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={screenKey}
+                initial={{opacity:0, y:14, filter:"blur(6px)"}}
+                animate={{opacity:1, y:0, filter:"blur(0px)"}}
+                exit={{opacity:0, y:-10, filter:"blur(6px)"}}
+                transition={{duration:0.42, ease:EASE}}
+                style={{flex:"1 1 0",display:"flex",flexDirection:"column",minHeight:0}}>
+                <div className="phone-screen">
+                  <div className="phone-status">
+                    <span className="num">9:41</span>
+                    <div style={{display:"flex",gap:4,alignItems:"center"}}>
+                      <svg width="14" height="9" viewBox="0 0 14 9" fill="none">
+                        <rect x="0.5" y="0.5" width="10" height="8" rx="1.5" stroke="var(--phone-text-1)"/>
+                        <rect x="2" y="2" width="7" height="5" fill="var(--phone-text-1)"/>
+                        <rect x="11.5" y="3" width="1.5" height="3" rx="0.4" fill="var(--phone-text-1)"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="phone-titlebar">
+                    <BKMark size={20} radius={5}/>
+                    <div style={{fontSize:11,fontWeight:600,color:"var(--phone-text-1)",letterSpacing:"-.01em"}}>{screen.title}</div>
+                  </div>
+                  <div style={{flex:"1 1 0",overflow:"hidden",minHeight:0}}>{screen.render()}</div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            <div style={{height:22,display:"flex",alignItems:"center",justifyContent:"center",background:"var(--phone-bg)"}}>
+              <div style={{width:108,height:4,background:"#000",borderRadius:2,opacity:.85}}/>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+/* ============================================================
+   NAVBAR — non-sticky, scrolls with page, light, co-brand
+   ============================================================ */
+function Navbar({showMetrics, setShowMetrics, scrolled}){
+  return (
+    <motion.div
+      initial={{opacity:0, y:-12}}
+      animate={{opacity:1, y:0}}
+      transition={{duration:0.6, ease:EASE, delay:0.1}}
+      style={{
+        position:"relative", zIndex:50,
+        backdropFilter:scrolled?"blur(20px) saturate(140%)":"blur(0px)",
+        WebkitBackdropFilter:scrolled?"blur(20px) saturate(140%)":"blur(0px)",
+        background:scrolled?"rgba(248,240,225,0.82)":"transparent",
+        borderBottom:scrolled?"1px solid var(--line-1)":"1px solid transparent",
+        transition:"background 300ms, border 300ms, backdrop-filter 300ms"
+      }}>
+      <div style={{maxWidth:1320, margin:"0 auto", padding:"16px 40px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:16, flexWrap:"wrap"}} className="navbar-inner">
+        <div style={{display:"flex",alignItems:"center",gap:13}}>
+          <BKMark size={32} radius={8}/>
+          <div style={{fontSize:13,fontWeight:600,letterSpacing:"-.005em",color:"var(--ink-1)"}}>
+            Альфа-Банк <span style={{color:"var(--ink-3)",fontWeight:500}}>×</span> Burger King
+            <span style={{color:"var(--ink-3)",fontWeight:400,marginLeft:8}}>/ Burger King Pay</span>
+          </div>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div className="eyebrow no-mark" style={{fontSize:10,letterSpacing:"0.16em",color:"var(--ink-4)"}}>CJM · 2026</div>
+          <button onClick={()=>setShowMetrics(!showMetrics)}
+            style={{display:"flex",alignItems:"center",gap:8, padding:"9px 14px", borderRadius:999, border:"1px solid var(--line-2)", background:"rgba(80,35,20,0.02)", fontSize:12, fontWeight:500, color:"var(--ink-1)", cursor:"pointer", transition:"background 200ms"}}
+            onMouseEnter={e=>e.currentTarget.style.background="rgba(80,35,20,0.05)"}
+            onMouseLeave={e=>e.currentTarget.style.background="rgba(80,35,20,0.02)"}>
+            <motion.span
+              animate={{background:showMetrics ? "var(--bk-deep)" : "rgba(80,35,20,0.18)", boxShadow:showMetrics ? "0 0 0 4px var(--bk-glow)" : "0 0 0 0 rgba(0,0,0,0)"}}
+              transition={{duration:0.3}}
+              style={{width:6,height:6,borderRadius:"50%"}}/>
+            {showMetrics?"Метрики ВКЛ":"Метрики ВЫКЛ"}
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+function Hero({activeJourney, setActiveJourney}){
+  return (
+    <section className="hero" style={{padding:"72px 40px 70px", maxWidth:1320, margin:"0 auto", position:"relative", display:"flex", flexDirection:"column", justifyContent:"flex-end"}}>
+      <motion.div initial={{opacity:0, y:8}} animate={{opacity:1, y:0}} transition={{duration:0.8, ease:EASE, delay:0.2}} className="eyebrow" style={{marginBottom:26}}>
+        Customer Journey Map · Burger King
+      </motion.div>
+      <div className="hero-grid" style={{display:"grid", gridTemplateColumns:"minmax(0, 1.5fr) minmax(0, 1fr)", gap:72, alignItems:"end", marginBottom:44}}>
+        <div>
+          <h1 className="display" style={{fontSize:"clamp(48px, 7.4vw, 112px)", fontWeight:800, letterSpacing:"-0.05em", lineHeight:0.94, margin:0, color:"var(--ink-1)"}}>
+            <motion.span initial={{opacity:0, y:60, filter:"blur(12px)"}} animate={{opacity:1, y:0, filter:"blur(0px)"}} transition={{duration:0.9, ease:EASE, delay:0.35}} style={{display:"inline-block"}}>Burger King</motion.span>{" "}
+            <motion.span initial={{opacity:0, y:60, filter:"blur(12px)"}} animate={{opacity:1, y:0, filter:"blur(0px)"}} transition={{duration:0.9, ease:EASE, delay:0.53}} className="mark-hl" style={{display:"inline-block"}}><span>Pay</span></motion.span>
+          </h1>
+        </div>
+        <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{duration:0.8, ease:EASE, delay:0.7}} style={{paddingBottom:18, maxWidth:380}}>
+          <div style={{fontSize:16, color:"var(--ink-2)", lineHeight:1.55, letterSpacing:"-0.005em"}}>
+            White-label кошелёк Альфа-Банка, встроенный в приложение и чек-аут Burger King. Клиентский путь, оплата и управление кошельком — с коронами за каждую оплату.
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:13,marginTop:22,fontSize:12,color:"var(--ink-3)",letterSpacing:"0.02em"}}>
+            <div style={{display:"flex",alignItems:"center",gap:6}}>
+              <span style={{width:6,height:6,borderRadius:"50%",background:"var(--bk-deep)",boxShadow:"0 0 8px var(--bk-glow)"}}/>
+              Live прототип
+            </div>
+            <span className="dot"/>
+            <span>5 сценариев</span>
+          </div>
+        </motion.div>
+      </div>
+      <ScenarioTabs activeJourney={activeJourney} setActiveJourney={setActiveJourney}/>
+    </section>
+  );
+}
+
+/* ============================================================
+   SCENARIO TABS — two groups, each with its own pill
+   ============================================================ */
+function TabRow({title, items, activeJourney, setActiveJourney, pillId}){
+  return (
+    <div style={{marginBottom:14}}>
+      <div className="eyebrow no-mark" style={{display:"flex", fontSize:10, letterSpacing:"0.16em", color:"var(--ink-3)", marginBottom:11, fontWeight:600}}>{title}</div>
+      <LayoutGroup id={pillId}>
+        <div style={{display:"inline-flex", background:"var(--surface-1)", border:"1px solid var(--line-2)", borderRadius:18, padding:5, gap:2, maxWidth:"100%", flexWrap:"wrap"}}>
+          {items.map(({j, gi})=>{
+            const active = gi === activeJourney;
+            return (
+              <button key={j.id} onClick={()=>setActiveJourney(gi)}
+                style={{position:"relative", padding:"12px 18px", borderRadius:14, fontSize:13.5, fontWeight:600, letterSpacing:"-0.005em", color: active ? "#fff" : "var(--ink-2)", display:"flex", alignItems:"center", gap:9, zIndex:1, background:"transparent", border:"none", cursor:"pointer", transition:"color 200ms"}}>
+                {active && (
+                  <motion.div layoutId={pillId+"-pill"} transition={{...SPRING.snappy}}
+                    style={{position:"absolute", inset:0, background:"var(--ink-1)", borderRadius:14, boxShadow:"0 8px 20px -6px rgba(80,35,20,0.30)", zIndex:-1}}/>
+                )}
+                {j.label}
+              </button>
+            );
+          })}
+        </div>
+      </LayoutGroup>
+    </div>
+  );
+}
+function ScenarioTabs({activeJourney, setActiveJourney}){
+  const journeyItems = journeys.map((j,gi)=>({j,gi})).filter(x=>x.j.group==="journey");
+  const capItems = journeys.map((j,gi)=>({j,gi})).filter(x=>x.j.group==="capability");
+  return (
+    <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{duration:0.8, ease:EASE, delay:0.85}}>
+      <TabRow title="Клиентский путь" items={journeyItems} activeJourney={activeJourney} setActiveJourney={setActiveJourney} pillId="grp-journey"/>
+      <TabRow title="Возможности кошелька" items={capItems} activeJourney={activeJourney} setActiveJourney={setActiveJourney} pillId="grp-cap"/>
+      <motion.div key={activeJourney} initial={{opacity:0, y:6}} animate={{opacity:1, y:0}} transition={{duration:0.4, ease:EASE}}
+        style={{fontSize:13, color:"var(--ink-3)", marginTop:8, letterSpacing:"-0.005em"}}>
+        {journeys[activeJourney].desc}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ============================================================
+   PROGRESS RAIL
+   ============================================================ */
+function ProgressRail({steps, active, onPick}){
+  const progress = active / Math.max(1, steps.length - 1);
+  return (
+    <div className="step-rail-wrap" style={{marginBottom:48}}>
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:16}}>
+        <div className="eyebrow" style={{margin:0}}>Шаги сценария</div>
+        <div className="num" style={{fontSize:11, color:"var(--ink-3)", fontWeight:500, letterSpacing:"0.04em"}}>
+          {String(active+1).padStart(2,"0")} <span style={{color:"var(--ink-4)"}}>/ {String(steps.length).padStart(2,"0")}</span>
+        </div>
+      </div>
+      <div style={{position:"relative", height:1, background:"var(--line-2)", marginBottom:18}}>
+        <motion.div animate={{width:`${progress*100}%`}} transition={SPRING.silky}
+          style={{position:"absolute", inset:0, background:"var(--bk-deep)", boxShadow:"0 0 12px var(--bk-glow)"}}/>
+      </div>
+      <div className="step-rail" style={{display:"grid", gridTemplateColumns:`repeat(${steps.length}, minmax(0,1fr))`, gap:8}}>
+        {steps.map((s, i)=>{
+          const isActive = i === active, isPast = i < active;
+          return (
+            <button key={i} className="step-rail-item" onClick={()=>onPick(i)}
+              style={{textAlign:"left", padding:"14px 0 0", borderTop:`1px solid ${isActive?"var(--bk-deep)":isPast?"var(--ink-2)":"var(--line-2)"}`, marginTop:-1, transition:"border-color 250ms", background:"transparent", position:"relative", cursor:"pointer"}}>
+              {isActive && (<motion.div layoutId="step-glow" transition={SPRING.silky} style={{position:"absolute", top:-3, left:0, right:0, height:5, background:"var(--bk)", filter:"blur(8px)", opacity:0.9}}/>)}
+              <div className="num" style={{fontSize:11, fontWeight:600, color: isActive?"var(--ink-1)":isPast?"var(--ink-2)":"var(--ink-4)", letterSpacing:"0.04em", marginBottom:6}}>{String(i+1).padStart(2,"0")}</div>
+              <div style={{fontSize:13, fontWeight:isActive?600:500, color: isActive?"var(--ink-1)":isPast?"var(--ink-2)":"var(--ink-3)", lineHeight:1.3, letterSpacing:"-0.005em"}}>{s.title}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   METRIC CELL
+   ============================================================ */
+function MetricCell({label, text, accent, style, cls}){
+  return (
+    <div className={cls} style={{position:"relative", ...style}}>
+      <div style={{display:"flex", alignItems:"center", gap:10, marginBottom:13}}>
+        <span style={{width:7, height:7, borderRadius:2, background: accent?"var(--bk-deep)":"var(--ink-1)", boxShadow: accent?"0 0 8px var(--bk-glow)":"none"}}/>
+        <span style={{fontSize:10, textTransform:"uppercase", letterSpacing:"0.14em", color: accent?"var(--ink-2)":"var(--ink-3)", fontWeight:700}}>{label}</span>
+      </div>
+      <div style={{fontSize:17, color:"var(--ink-1)", lineHeight:1.35, letterSpacing:"-0.01em", fontWeight:500, textWrap:"pretty"}}>{text}</div>
+    </div>
+  );
+}
+
+/* ============================================================
+   STEP INFO — text + metrics + nav ("В начало" on last step)
+   ============================================================ */
+function StepInfo({step, stepIdx, totalSteps, showMetrics, showBank=true, onPrev, onNext, onRestart}){
+  const isLast = stepIdx === totalSteps - 1;
+  return (
+    <div style={{minWidth:0, paddingTop:8}}>
+      <AnimatePresence mode="wait">
+        <motion.div key={stepIdx} initial={{opacity:0, y:14}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-10}} transition={{duration:0.4, ease:EASE}}>
+          <div style={{display:"flex", alignItems:"center", gap:12, marginBottom:22, flexWrap:"wrap"}}>
+            <span className="eyebrow" style={{margin:0}}>Шаг {stepIdx+1}</span>
+            <span style={{fontSize:11, color:"var(--ink-1)", fontWeight:500, padding:"5px 12px", border:"1px solid var(--line-2)", borderRadius:999, background:"var(--surface-1)"}}>{step.zone}</span>
+          </div>
+          <h2 style={{fontSize:"clamp(32px, 4.2vw, 60px)", fontWeight:700, letterSpacing:"-0.035em", lineHeight:1.03, color:"var(--ink-1)", margin:"0 0 22px", textWrap:"balance"}}>{step.title}</h2>
+          <p style={{fontSize:17, color:"var(--ink-2)", lineHeight:1.55, margin:"0 0 34px", letterSpacing:"-0.005em", maxWidth:600, textWrap:"pretty"}}>{step.desc}</p>
+          {showMetrics && step.metricPartner && (
+            <div className="metrics-grid" style={{display:"grid", gridTemplateColumns: showBank?"1fr 1fr":"1fr", gap:0, borderTop:"1px solid var(--line-2)", borderBottom:"1px solid var(--line-2)"}}>
+              <MetricCell label="Ценность для Burger King" text={step.metricPartner} accent={false} cls="m-l" style={{padding: showBank?"26px 30px 26px 0":"26px 0", borderRight: showBank?"1px solid var(--line-2)":"none"}}/>
+              {showBank && <MetricCell label="Ценность для Альфа-Банка" text={step.metricBank} accent={true} cls="m-r" style={{padding:"26px 0 26px 30px"}}/>}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      <div style={{display:"flex", gap:10, marginTop:34}}>
+        <button disabled={stepIdx===0} onClick={onPrev}
+          style={{display:"flex", alignItems:"center", gap:8, padding:"13px 22px", border:"1px solid var(--line-2)", borderRadius:12, fontSize:13, fontWeight:600, color: stepIdx===0?"var(--ink-4)":"var(--ink-1)", background:"var(--surface-1)", cursor: stepIdx===0?"default":"pointer", opacity: stepIdx===0?0.5:1, transition:"background 200ms"}}
+          onMouseEnter={e=>{ if(stepIdx>0) e.currentTarget.style.background="var(--surface-2)"; }}
+          onMouseLeave={e=>{ if(stepIdx>0) e.currentTarget.style.background="var(--surface-1)"; }}>
+          <Ico d={ICONS.arrow_l} size={14}/> Назад
+        </button>
+        {isLast ? (
+          <button onClick={onRestart}
+            style={{display:"flex", alignItems:"center", gap:9, padding:"13px 26px", border:"none", borderRadius:12, fontSize:13, fontWeight:700, color:"var(--ink-1)", background:"var(--bk)", cursor:"pointer", transition:"background 200ms", boxShadow:"0 8px 24px -6px var(--bk-glow)"}}
+            onMouseEnter={e=>e.currentTarget.style.background="var(--bk-deep)"}
+            onMouseLeave={e=>e.currentTarget.style.background="var(--bk)"}>
+            <Ico d={ICONS.restart} size={14}/> В начало
+          </button>
+        ) : (
+          <button onClick={onNext}
+            style={{display:"flex", alignItems:"center", gap:10, padding:"13px 26px", border:"none", borderRadius:12, fontSize:13, fontWeight:600, color:"#fff", background:"var(--ink-1)", cursor:"pointer", transition:"opacity 200ms", boxShadow:"0 8px 24px -6px rgba(80,35,20,0.3)"}}
+            onMouseEnter={e=>e.currentTarget.style.opacity="0.86"}
+            onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+            Далее <Ico d={ICONS.arrow_r} size={14}/>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   MOBILE STEP NAV
+   ============================================================ */
+function MobileStepNav({current, total, onPrev, onNext}){
+  const atStart = current === 0, atEnd = current === total - 1;
+  return (
+    <div className="mobile-step-nav" role="group" aria-label="Навигация по шагам">
+      <button type="button" aria-label="Предыдущий шаг" disabled={atStart} onClick={onPrev}>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
+      <div className="counter num">
+        <span style={{color:"var(--ink-1)"}}>{String(current+1).padStart(2,"0")}</span>
+        <span style={{opacity:.4,margin:"0 6px"}}>/</span>
+        <span style={{color:"var(--ink-3)"}}>{String(total).padStart(2,"0")}</span>
+      </div>
+      <button type="button" aria-label="Следующий шаг" disabled={atEnd} onClick={onNext}>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 4l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
+   PAY MODE TOGGLE — online / offline (capability journeys)
+   ============================================================ */
+function PayModeToggle({payMode, setPayMode}){
+  const modes = [{id:"online",label:"Онлайн"},{id:"offline",label:"Офлайн"}];
+  return (
+    <div style={{display:"flex", justifyContent:"center", marginBottom:30}}>
+      <LayoutGroup id="paymode">
+        <div style={{display:"inline-flex", background:"var(--surface-1)", border:"1px solid var(--line-2)", borderRadius:14, padding:4, gap:2}}>
+          {modes.map(m=>{
+            const active = m.id===payMode;
+            return (
+              <button key={m.id} onClick={()=>setPayMode(m.id)}
+                style={{position:"relative", padding:"9px 22px", borderRadius:11, fontSize:13, fontWeight:600, color: active?"#fff":"var(--ink-2)", background:"transparent", border:"none", cursor:"pointer", zIndex:1, transition:"color 200ms"}}>
+                {active && <motion.div layoutId="paymode-pill" transition={{...SPRING.snappy}} style={{position:"absolute", inset:0, background:"var(--ink-1)", borderRadius:11, zIndex:-1}}/>}
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+      </LayoutGroup>
+    </div>
+  );
+}
+
+/* ============================================================
+   CJM SECTION
+   ============================================================ */
+function useSwipe(onLeft, onRight){
+  const sx = useRef(null), sy = useRef(null);
+  return {
+    onTouchStart:(e)=>{ const t=e.touches[0]; sx.current=t.clientX; sy.current=t.clientY; },
+    onTouchEnd:(e)=>{
+      if(sx.current==null) return;
+      const t=e.changedTouches[0];
+      const dx=t.clientX-sx.current, dy=t.clientY-sy.current;
+      sx.current=null;
+      if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.4){ dx<0 ? onLeft() : onRight(); }
+    }
+  };
+}
+
+function CJMSection({activeJourney, activeStep, setActiveStep, showMetrics, payMode, setPayMode}){
+  const j = journeys[activeJourney];
+  const hasVariants = !!j.variants;
+  const steps = hasVariants ? j.variants[payMode] : j.steps;
+  const safeStep = Math.min(activeStep, steps.length - 1);
+  const step = steps[safeStep];
+  const swipe = useSwipe(
+    ()=>setActiveStep(p=>Math.min(steps.length-1, p+1)),
+    ()=>setActiveStep(p=>Math.max(0, p-1))
+  );
+  return (
+    <section className="section" style={{maxWidth:1320, margin:"0 auto", padding:"50px 40px 100px", position:"relative"}}>
+      {hasVariants && <PayModeToggle payMode={payMode} setPayMode={setPayMode}/>}
+      <ProgressRail steps={steps} active={safeStep} onPick={setActiveStep}/>
+      <div className="work-grid" style={{display:"grid", gridTemplateColumns:"minmax(340px, 0.9fr) minmax(0, 1.2fr)", gap:80, alignItems:"start"}}>
+        <div className="phone-wrap" {...swipe} style={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:20}}>
+          <Phone screenKey={step.screen}/>
+          <MobileStepNav current={safeStep} total={steps.length}
+            onPrev={()=>setActiveStep(p=>Math.max(0, p-1))}
+            onNext={()=>setActiveStep(p=>Math.min(steps.length-1, p+1))}/>
+        </div>
+        <StepInfo step={step} stepIdx={safeStep} totalSteps={steps.length} showMetrics={showMetrics}
+          onPrev={()=>setActiveStep(p=>Math.max(0, p-1))}
+          onNext={()=>setActiveStep(p=>Math.min(steps.length-1, p+1))}
+          onRestart={()=>setActiveStep(0)}/>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+   BENEFITS — 3 groups (Клиент / Burger King / Альфа-Банк)
+   ============================================================ */
+function BenefitCard({item, index, inView, accentMode, large}){
+  const [hover, setHover] = useState(false);
+  return (
+    <motion.div
+      initial={{opacity:0, y:30}} animate={inView?{opacity:1, y:0}:{}} transition={{duration:0.7, ease:EASE, delay:index*0.06}}
+      onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} className={large?"b-large":""}
+      style={{gridColumn: large?"span 2":"span 1", gridRow:"span 1", background:"var(--surface-1)", border:"1px solid var(--line-1)", borderRadius:"var(--radius-lg)", padding:large?"34px 30px":"26px 22px", position:"relative", overflow:"hidden", transition:"border-color 300ms", cursor:"default"}}>
+      <motion.div animate={{opacity:hover?1:0}} transition={{duration:0.4}} style={{position:"absolute", inset:0, pointerEvents:"none", background:"radial-gradient(circle at 80% 0%, rgba(242,145,0,0.16), transparent 60%)"}}/>
+      <motion.div animate={{opacity:hover?1:0}} transition={{duration:0.3}} style={{position:"absolute", inset:0, borderRadius:"var(--radius-lg)", pointerEvents:"none", border:"1px solid var(--bk-deep)"}}/>
+      <div style={{position:"relative", zIndex:1, height:"100%", display:"flex", flexDirection:"column"}}>
+        <div style={{display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:large?26:18, gap:16}}>
+          <motion.div animate={{y: hover?-2:0}} transition={{duration:0.3}}
+            style={{width:large?52:42, height:large?52:42, borderRadius:12, color:"var(--ink-1)", background: accentMode?"var(--bk)":"var(--surface-2)", border: accentMode?"1px solid var(--bk-deep)":"1px solid var(--line-2)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0}}>
+            <Ico d={ICONS[item.icon]} size={large?24:20}/>
+          </motion.div>
+          {item.accent && (
+            <div className="num" style={{fontSize: large?34:20, fontWeight:800, letterSpacing:"-0.03em", color:"var(--ink-1)", lineHeight:1, background: accentMode?"var(--bk)":"transparent", padding: accentMode?"4px 12px":0, borderRadius: accentMode?10:0}}>{item.accent}</div>
+          )}
+        </div>
+        <div style={{fontSize: large?22:16.5, fontWeight:600, color:"var(--ink-1)", marginBottom:9, letterSpacing:"-0.015em", lineHeight:1.2}}>{item.title}</div>
+        <div style={{fontSize: large?15:13, color:"var(--ink-3)", lineHeight:1.55, letterSpacing:"-0.005em", marginTop:"auto"}}>{item.desc}</div>
+      </div>
+    </motion.div>
+  );
+}
+function BenefitGroup({eyebrow, title, sub, items, accentMode}){
+  const [ref, inView] = useReveal(true, 0.15);
+  return (
+    <div ref={ref} style={{marginTop:72}}>
+      <motion.div initial={{opacity:0, y:20}} animate={inView?{opacity:1, y:0}:{}} transition={{duration:0.7, ease:EASE}} style={{marginBottom:40, maxWidth:680}}>
+        <div className="eyebrow" style={{color:"var(--ink-3)", marginBottom:13}}>{eyebrow}</div>
+        <h3 style={{fontSize:"clamp(30px, 4.4vw, 58px)", fontWeight:700, letterSpacing:"-0.035em", lineHeight:1.05, color:"var(--ink-1)", margin:"0 0 13px", textWrap:"balance"}}>{title}</h3>
+        <div style={{fontSize:15, color:"var(--ink-3)", letterSpacing:"-0.005em"}}>{sub}</div>
+      </motion.div>
+      <div className="bento-grid" style={{display:"grid", gridTemplateColumns:"repeat(3, minmax(0, 1fr))", gridAutoRows:"minmax(210px, auto)", gap:12}}>
+        {items.map((b, i)=>(<BenefitCard key={i} item={b} index={i} inView={inView} accentMode={accentMode} large={i===0}/>))}
+      </div>
+    </div>
+  );
+}
+function BenefitsSection(){
+  return (
+    <section className="section" style={{maxWidth:1320, margin:"0 auto", padding:"30px 40px 70px"}}>
+      <BenefitGroup eyebrow="01 / Клиент" title="Преимущества для клиента" sub="Что получает гость Burger King" items={benefitsClient} accentMode={true}/>
+      <BenefitGroup eyebrow="02 / Burger King" title="Преимущества для Burger King" sub="Что даёт Burger King встроенный кошелёк" items={benefitsPartner} accentMode={false}/>
+      <BenefitGroup eyebrow="03 / Альфа-Банк" title="Ценность для Альфа-Банка" sub="Стратегические эффекты канала Burger King" items={benefitsBank} accentMode={true}/>
+    </section>
+  );
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+function Footer(){
+  return (
+    <footer style={{maxWidth:1320, margin:"0 auto", padding:"40px 40px 60px", borderTop:"1px solid var(--line-1)", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:16}}>
+      <div style={{display:"flex", alignItems:"center", gap:12}}>
+        <BKMark size={24} radius={6}/>
+        <span style={{fontSize:11, color:"var(--ink-3)", fontWeight:500, letterSpacing:"-0.005em"}}>Burger King Pay · white-label кошелёк · 2026</span>
+      </div>
+      <span style={{fontSize:11, color:"var(--ink-4)", letterSpacing:"0.04em"}}>Услугу оказывает АО «Альфа-Банк»</span>
+    </footer>
+  );
+}
+
+/* ============================================================
+   APP
+   ============================================================ */
+function App(){
+  const [activeJourney, setActiveJourney] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  const [payMode, setPayMode] = useState("online");
+  const [showMetrics, setShowMetrics] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  useGlobalSpotlight();
+  useEffect(()=>{ setActiveStep(0); }, [activeJourney, payMode]);
+  useEffect(()=>{
+    const onScroll = ()=> setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, {passive:true});
+    return ()=>window.removeEventListener('scroll', onScroll);
+  },[]);
+  return (
+    <div style={{minHeight:"100vh"}}>
+      <Navbar showMetrics={showMetrics} setShowMetrics={setShowMetrics} scrolled={scrolled}/>
+      <Hero activeJourney={activeJourney} setActiveJourney={setActiveJourney}/>
+      <CJMSection activeJourney={activeJourney} activeStep={activeStep} setActiveStep={setActiveStep} showMetrics={showMetrics} payMode={payMode} setPayMode={setPayMode}/>
+      <BenefitsSection/>
+      <Footer/>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>
