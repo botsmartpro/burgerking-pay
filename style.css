@@ -169,3 +169,7 @@
 .cart-item-photo{width:68px;flex-shrink:0}
 .cart-item-photo .food-art,.cart-item-photo .food-art.food-photo{height:65px;width:68px}
 @media(max-width:600px){.food-art.food-photo,.food-photo-set{height:145px}.product .tag{font-size:8px;line-height:1.5;min-height:24px}.cart-item-photo{width:48px}.cart-item-photo .food-art,.cart-item-photo .food-art.food-photo{width:48px;height:48px}.cart-item-info{gap:8px}.cart-item-info b{font-size:13px}}
+/* Official Burger King logo, kept as its original vector artwork. */
+.logo{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:72px;height:72px;padding:0;border:0;border-radius:0;line-height:1;letter-spacing:normal}
+.logo img{display:block;width:72px;height:72px;object-fit:contain}
+@media(max-width:600px){.logo,.logo img{width:56px;height:56px}}
